@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Raven: Uma Jornada Melancólica</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        canvas {
+            background-color: #1a1a2e;
+            border: 2px solid #555;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        #intro-overlay,
+        #end-overlay,
+        #chapter-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 100;
+            cursor: pointer;
+            animation: fadeIn 2s forwards;
+        }
+
+        #end-overlay,
+        #chapter-overlay {
+            display: none;
+        }
+
+        #darkness-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        #dialog-box,
+        #whisper-box {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 20px;
+            border: 1px solid #777;
+            text-align: center;
+            font-size: 1.1em;
+            display: none;
+            z-index: 50;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            font-style: italic;
+            transition: opacity 0.3s ease;
+        }
+
+        #inventory {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            gap: 10px;
+            z-index: 60;
+        }
+
+        .inventory-item {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #777;
+            border-radius: 3px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: white;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .inventory-item.active {
+            border: 1px solid #fff;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+        .inventory-item.has-item {
+            background: rgba(100, 100, 200, 0.3);
+        }
+
+        .speech-bubble {
+            position: absolute;
+            width: 150px;
+            height: 50px;
+            display: none;
+            z-index: 50;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="50" viewBox="0 0 150 50"><path d="M10 0 H140 C145.523 0 150 4.477 150 10 V40 C150 45.523 145.523 50 140 50 H30 L10 40 V10 C10 4.477 14.477 0 20 0 Z" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: black;
+            padding: 5px;
+            box-sizing: border-box;
+            text-align: center;
+            bottom: 60px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 12px;
+            z-index: 60;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        #controls:hover {
+            opacity: 1;
+        }
+
+        #interaction-notification {
+            position: absolute;
+            bottom: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: none;
+            z-index: 55;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            }
+            100% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        @keyframes typewriter {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        @keyframes ravenFlyIn {
+            0% {
+                transform: translateX(-100px) translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0) translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typewriter 4s steps(40) 1s both;
+        }
+
+        .raven-fly-in {
+            animation: ravenFlyIn 2s forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="intro-overlay">
+        <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">O Corvo</h1>
+        <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+            "Em uma meia-noite agreste, enquanto eu pensava, fraco e cansado, sobre muitos
+            volumes estranhos e esquecidos do saber antigo, e cabeceava, quase a dormir, ouviu-se de repente um leve
+            bater, como de alguém que suavemente batesse à porta do meu quarto..."
+        </p>
+        <p class="typewriter" style="margin-top: 40px; font-weight: bold; letter-spacing: 1px;">
+            Clique para começar esta jornada melancólica...
+        </p>
+    </div>
+
+    <div id="chapter-overlay">
+        <h2 id="chapter-title" style="font-size: 2.5em; animation: pulse 2s infinite; margin-bottom: 20px;"></h2>
+        <p id="chapter-text" style="font-style: italic; max-width: 800px; line-height: 1.6;"></p>
+        <p style="margin-top: 30px; font-weight: bold;">Clique para continuar...</p>
+    </div>
+
+    <div id="end-overlay">
+        <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">Nevermore...</h1>
+        <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+            "E o Corvo, nunca se movendo, ainda está sentado, ainda está sentado
+            no pálido busto de Palas, logo acima da porta de meu aposento;
+            E seus olhos têm toda a aparência de um demônio que está sonhando,
+            E a luz da lâmpada, sobre ele fluindo, lança sua sombra no chão;
+            E minha alma, dessa sombra que flutua no chão,
+            Não se levantará - nunca mais!"
+        </p>
+    </div>
+
+    <div id="darkness-overlay"></div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="dialog-box"></div>
+    <div id="whisper-box"></div>
+    <div id="inventory"></div>
+    <div id="controls">
+        Movimento: A/D ou Setas ← →<br>
+        Interagir: E<br>
+        Inventário: 1-5
+    </div>
+    <div id="interaction-notification"></div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const introOverlay = document.getElementById('intro-overlay');
+        const endOverlay = document.getElementById('end-overlay');
+        const chapterOverlay = document.getElementById('chapter-overlay');
+        const darknessOverlay = document.getElementById('darkness-overlay');
+        const dialogBox = document.getElementById('dialog-box');
+        const whisperBox = document.getElementById('whisper-box');
+        const inventoryElement = document.getElementById('inventory');
+        const chapterTitle = document.getElementById('chapter-title');
+        const chapterText = document.getElementById('chapter-text');
+        const interactionNotification = document.getElementById('interaction-notification');
+
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Sons (placeholders - você precisará adicionar os arquivos de áudio)
+        const sounds = {
+            raven: new Audio(), // 'sounds/raven.mp3'
+            knock: new Audio(), // 'sounds/knock.mp3'
+            whisper: new Audio(), // 'sounds/whisper.mp3'
+            fireplace: new Audio(), // 'sounds/fireplace.mp3'
+            page: new Audio(), // 'sounds/page.mp3'
+            clock: new Audio(), // 'sounds/clock.mp3'
+            wind: new Audio(), // 'sounds/wind.mp3'
+            itemPickup: new Audio(), // 'sounds/item-pickup.mp3'
+        };
+
+        // Configurar sons
+        for (const key in sounds) {
+            sounds[key].volume = 0.5;
+            sounds[key].loop = key === 'fireplace' || key === 'wind';
+            if (key === 'wind') {
+                sounds[key].volume = 0.3;
+            }
+        }
+
+        const images = {};
+        const imageFiles = {
+            grass: 'imgs/grass.png',
+            sky: 'imgs/sky.png',
+            narrator: 'imgs/narrator.png',
+            raven: 'imgs/raven.png',
+            fireplaceOn: 'imgs/lareira.png',
+            fireplaceOff: 'imgs/lareiraApagada.png',
+            clock: 'imgs/relogio.png',
+            pallas: 'https://placehold.co/64x64/D3D3D3/000?text=Pallas',
+            lenorePortrait: 'https://placehold.co/48x64/E6D5B8/000?text=Retrato',
+            bookshelf: 'https://placehold.co/64x64/A0522D/FFF?text=Livros',
+            pallasBust: 'https://placehold.co/48x64/D3D3D3/000?text=Busto',
+            door: 'https://placehold.co/64x64/8B4513/FFF?text=Porta',
+            window: 'https://placehold.co/64x64/87CEEB/000?text=Janela'
+        };
+
+        let imagesLoaded = 0;
+        const totalImages = Object.keys(imageFiles).length;
+
+        for (const key in imageFiles) {
+            images[key] = new Image();
+            images[key].src = imageFiles[key];
+            images[key].onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded === totalImages) {
+                    introOverlay.addEventListener('click', () => {
+                        introOverlay.style.display = 'none';
+                        showChapter(0);
+                    });
+                }
+            };
+        }
+
+        // Variáveis do Jogo
+        let cameraX = 0;
+        let player = {
+            x: 0,
+            y: 0,
+            width: 32,
+            height: 64,
+            speedX: 0,
+            maxSpeed: 3,
+            acceleration: 0.2,
+            deceleration: 0.9,
+            targetSpeed: 0
+        };
+
+        // Capítulos da história
+        const chapters = [
+            {
+                title: "O Início da Agonia",
+                text: "Era uma vez uma meia-noite lúgubre, e eu, debruçado sobre livros esquecidos, buscava em vão alívio para minha dor - dor pela perda de Lenore, a radiante donzela que os anjos chamavam Lenore - nome que agora é só um eco, apenas isso e nada mais."
+            },
+            {
+                title: "O Sussurro na Escuridão",
+                text: "Enquanto eu cabeceava, quase adormecido, ouvi de repente um leve bater, como se alguém suavemente batesse à porta do meu quarto. 'É um visitante', murmurei para mim mesmo, 'batendo à porta do meu quarto - apenas isso, e nada mais'."
+            },
+            {
+                title: "A Chegada do Mensageiro",
+                text: "A porta abri; escuridão profunda, e nada mais. Olhando para as trevas, fiquei ali, duvidoso, sonhando sonhos que nenhum mortal ousara sonhar até então. Mas o silêncio não foi quebrado, e a quietude não deu sinal."
+            },
+            {
+                title: "O Corvo da Antiga Era",
+                text: "E então, com o bater de cortinas, ouvi um batido mais forte do que antes. 'Com certeza', disse eu, 'isso é algo na minha janela grade. Deixemos ver, então, o que está ali, e exploremos este mistério'."
+            },
+            {
+                title: "Nunca Mais",
+                text: "Abri a janela e, com agitado bater de asas, entrou um majestoso Corvo dos santos dias idos. Ele não fez nenhuma reverência, não parou nem hesitou; mas, com ar de lorde ou lady, pousou sobre o busto de Palas, logo acima da porta de meu aposento - pousou, e nada mais."
+            }
+        ];
+
+        const objects = [
+            { id: 'door', x: 800, y: 0, width: 64, height: 64, type: 'interactable', action: 'door', chapter: 1 },
+            { id: 'window', x: 1500, y: 50, width: 64, height: 64, type: 'interactable', action: 'window', chapter: 3 },
+            { id: 'fireplace', x: 2500, y: 0, width: 64, height: 64, state: 'on', type: 'interactable', action: 'fireplace', chapter: 0 },
+            { id: 'lenorePortrait', x: 3500, y: 50, width: 48, height: 64, type: 'interactable', action: 'lenore', chapter: 0 },
+            { id: 'bookshelf', x: 4500, y: 0, width: 64, height: 64, type: 'interactable', action: 'books', chapter: 0 },
+            { id: 'pallasBust', x: 6000, y: 50, width: 48, height: 64, type: 'interactable', action: 'pallasBust', chapter: 4 },
+            { id: 'clock', x: 7000, y: 50, width: 48, height: 64, type: 'interactable', action: 'clock', chapter: 0 },
+            { id: 'finalPallas', x: 7500, y: 0, width: 64, height: 64, type: 'static', hidden: true, chapter: 4 }
+        ];
+
+        const raven = {
+            x: 0, y: 0, width: 32, height: 32,
+            state: 'hidden', // hidden, flying, perched
+            targetX: 0,
+            targetY: 0,
+            speed: 3
+        };
+
+        const inventory = [
+            { id: 'book', name: 'Livro', active: false, hasItem: false, usage: 'read' },
+            { id: 'portrait', name: 'Retrato', active: false, hasItem: false, usage: 'look' },
+            { id: 'key', name: 'Chave', active: false, hasItem: false, usage: 'unlock' },
+            { id: 'candle', name: 'Vela', active: false, hasItem: false, usage: 'light' },
+            { id: 'feather', name: 'Pena', active: false, hasItem: false, usage: 'examine' }
+        ];
+
+        let isPlaying = false;
+        let isRavenBlinking = false;
+        let ravenBlinkTimeout;
+        let gameEnded = false;
+        let currentChapter = 0;
+        let hasInteractedWithDoor = false;
+        let hasInteractedWithWindow = false;
+        let ravenEntered = false;
+        let lastTime = 0;
+        let nearObject = null;
+        let lastRavenAppearance = 0; // Variável declarada corretamente
+
+        const keys = {};
+        document.addEventListener('keydown', (e) => {
+            if (isPlaying) {
+                keys[e.key] = true;
+                
+                // Teclas de inventário (1-5)
+                if (e.key >= '1' && e.key <= '5') {
+                    const index = parseInt(e.key) - 1;
+                    if (index < inventory.length) {
+                        selectInventoryItem(index);
+                    }
+                }
+                
+                // Usar item ativo
+                if ((e.key === 'u' || e.key === 'U') && nearObject) {
+                    useActiveItem(nearObject);
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (isPlaying) {
+                keys[e.key] = false;
+            }
+        });
+
+        function showChapter(chapterIndex) {
+            if (chapterIndex >= chapters.length) {
+                isPlaying = true;
+                initGame();
+                return;
+            }
+            
+            currentChapter = chapterIndex;
+            chapterTitle.textContent = chapters[chapterIndex].title;
+            chapterText.textContent = chapters[chapterIndex].text;
+            chapterOverlay.style.display = 'flex';
+            
+            chapterOverlay.onclick = () => {
+                chapterOverlay.style.display = 'none';
+                if (chapterIndex === chapters.length - 1) {
+                    isPlaying = true;
+                    initGame();
+                } else {
+                    showChapter(chapterIndex + 1);
+                }
+            };
+        }
+
+        function showDialog(text, duration = 4000) {
+            dialogBox.textContent = text;
+            dialogBox.style.display = 'block';
+            dialogBox.style.opacity = 1;
+            setTimeout(() => {
+                dialogBox.style.opacity = 0;
+                setTimeout(() => {
+                    dialogBox.style.display = 'none';
+                }, 300);
+            }, duration);
+        }
+
+        function showWhisper(text, duration = 4000) {
+            whisperBox.textContent = text;
+            whisperBox.style.display = 'block';
+            whisperBox.style.opacity = 1;
+            setTimeout(() => {
+                whisperBox.style.opacity = 0;
+                setTimeout(() => {
+                    whisperBox.style.display = 'none';
+                }, 300);
+            }, duration);
+        }
+
+        function showNotification(text, duration = 2000) {
+            interactionNotification.textContent = text;
+            interactionNotification.style.display = 'block';
+            setTimeout(() => {
+                interactionNotification.style.display = 'none';
+            }, duration);
+        }
+
+        function updateInventory() {
+            inventoryElement.innerHTML = '';
+            inventory.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = `inventory-item ${item.active ? 'active' : ''} ${item.hasItem ? 'has-item' : ''}`;
+                itemElement.textContent = item.name[0];
+                itemElement.title = `${item.name}${item.hasItem ? '' : ' (não obtido)'}`;
+                itemElement.onclick = () => selectInventoryItem(index);
+                inventoryElement.appendChild(itemElement);
+            });
+        }
+
+        function selectInventoryItem(index) {
+            inventory.forEach((item, i) => {
+                item.active = i === index;
+            });
+            updateInventory();
+            
+            const activeItem = inventory.find(item => item.active);
+            if (activeItem && activeItem.hasItem) {
+                showNotification(`Item selecionado: ${activeItem.name}. Pressione U para usar.`, 2000);
+            }
+        }
+
+        function addToInventory(itemId) {
+            const item = inventory.find(i => i.id === itemId);
+            if (item && !item.hasItem) {
+                item.hasItem = true;
+                item.active = true;
+                updateInventory();
+                showDialog(`Você adquiriu: ${item.name}`);
+                sounds.itemPickup.play();
+                
+                // Seleciona automaticamente o novo item
+                selectInventoryItem(inventory.indexOf(item));
+            }
+        }
+
+        function useActiveItem(object) {
+            const activeItem = inventory.find(item => item.active && item.hasItem);
+            if (!activeItem) return;
+            
+            switch (activeItem.id) {
+                case 'book':
+                    if (object.action === 'books') {
+                        showDialog('Você relembra os conhecimentos antigos... talvez haja uma maneira de comunicar-se com o além.');
+                    } else {
+                        showDialog('Não é o momento adequado para ler.');
+                    }
+                    break;
+                case 'portrait':
+                    if (object.action === 'lenore') {
+                        showDialog('Lenore... seu sorriso ainda vive em minha memória. Por que você teve que partir?');
+                    } else {
+                        showDialog('Contemplar o retrato de Lenore aqui não trará conforto.');
+                    }
+                    break;
+                case 'candle':
+                    if (object.action === 'fireplace') {
+                        const fireplace = objects.find(obj => obj.id === 'fireplace');
+                        if (fireplace.state === 'off') {
+                            fireplace.state = 'on';
+                            darknessOverlay.style.opacity = 0;
+                            sounds.fireplace.play();
+                            sounds.wind.pause();
+                            showDialog('Você acendeu a lareira com a vela. A sala se enche de calor e luz.');
+                        } else {
+                            showDialog('A lareira já está acesa.');
+                        }
+                    } else {
+                        showDialog('Não há como usar a vela aqui.');
+                    }
+                    break;
+                case 'feather':
+                    if (object.action === 'pallasBust' && raven.state === 'perched') {
+                        showDialog('A pena do corvo... talvez seja uma conexão com o mundo espiritual. O que ele realmente quer me dizer?');
+                    } else {
+                        showDialog('Esta pena negra como ébano brilha misteriosamente à luz tremula do fogo.');
+                    }
+                    break;
+                default:
+                    showDialog(`Não há como usar ${activeItem.name} aqui.`);
+            }
+        }
+
+        function updateRaven() {
+            const now = Date.now();
+            
+            switch (raven.state) {
+                case 'hidden':
+                    if (currentChapter >= 3 && now - lastRavenAppearance > 15000 && !ravenEntered) {
+                        raven.state = 'flying';
+                        raven.x = -100;
+                        raven.y = -100;
+                        raven.targetX = objects.find(obj => obj.id === 'window').x - 50;
+                        raven.targetY = 100;
+                        lastRavenAppearance = now;
+                        sounds.raven.play();
+                    }
+                    break;
+                    
+                case 'flying':
+                    // Movimento em direção ao alvo
+                    const dx = raven.targetX - raven.x;
+                    const dy = raven.targetY - raven.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > raven.speed) {
+                        raven.x += (dx / distance) * raven.speed;
+                        raven.y += (dy / distance) * raven.speed;
+                    } else {
+                        // Chegou à janela
+                        raven.x = raven.targetX;
+                        raven.y = raven.targetY;
+                        
+                        if (!hasInteractedWithWindow) {
+                            // Espera o jogador interagir com a janela
+                            showNotification("Há um corvo batendo na janela! Interaja com a janela.", 3000);
+                        } else {
+                            // Voa para o busto de Pallas
+                            const pallasBust = objects.find(obj => obj.id === 'pallasBust');
+                            raven.targetX = pallasBust.x;
+                            raven.targetY = pallasBust.y + 20;
+                            raven.state = 'flyingToBust';
+                        }
+                    }
+                    break;
+                    
+                case 'flyingToBust':
+                    const bust = objects.find(obj => obj.id === 'pallasBust');
+                    const dx2 = bust.x - raven.x;
+                    const dy2 = (bust.y + 20) - raven.y;
+                    const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+                    
+                    if (distance2 > raven.speed) {
+                        raven.x += (dx2 / distance2) * raven.speed;
+                        raven.y += (dy2 / distance2) * raven.speed;
+                    } else {
+                        // Chegou ao busto
+                        raven.x = bust.x;
+                        raven.y = bust.y + 20;
+                        raven.state = 'perched';
+                        ravenEntered = true;
+                        showDialog("O Corvo pousou no busto de Palas e não se move mais. Seus olhos parecem penetrar minha alma.");
+                    }
+                    break;
+                    
+                case 'perched':
+                    // O corvo está parado no busto, piscando ocasionalmente
+                    if (now - lastRavenAppearance > 8000 && !isRavenBlinking) {
+                        blinkRaven();
+                        lastRavenAppearance = now;
+                    }
+                    break;
+            }
+        }
+
+        function blinkRaven() {
+            isRavenBlinking = true;
+            ravenBlinkTimeout = setTimeout(() => {
+                isRavenBlinking = false;
+            }, 500);
+        }
+
+        function updatePlayer() {
+            // Movimento mais suave com aceleração
+            if (keys['ArrowLeft'] || keys['a']) {
+                player.targetSpeed = -player.maxSpeed;
+            } else if (keys['ArrowRight'] || keys['d']) {
+                player.targetSpeed = player.maxSpeed;
+            } else {
+                player.targetSpeed = 0;
+            }
+            
+            // Aplicar aceleração
+            player.speedX += (player.targetSpeed - player.speedX) * player.acceleration;
+            
+            // Aplicar desaceleração quando não há entrada
+            if (player.targetSpeed === 0) {
+                player.speedX *= player.deceleration;
+                if (Math.abs(player.speedX) < 0.1) player.speedX = 0;
+            }
+            
+            player.x += player.speedX;
+
+            // Limita o movimento horizontal do jogador
+            if (player.x < 0) {
+                player.x = 0;
+                player.speedX = 0;
+            }
+            if (player.x > 8000) {
+                player.x = 8000;
+                player.speedX = 0;
+            }
+        }
+
+        function updateCamera() {
+            // Movimento da Câmera
+            const playerScreenX = player.x - cameraX;
+            const screenCenter = canvas.width / 2;
+            cameraX = player.x - screenCenter;
+        }
+
+        function updateInteractions() {
+            // Verifica interações com objetos
+            nearObject = null;
+            objects.forEach(obj => {
+                if (obj.chapter > currentChapter) return;
+                
+                const distanceToObject = Math.abs(player.x - obj.x);
+                if (distanceToObject < 70) {
+                    nearObject = obj;
+                    
+                    let bubble = document.getElementById('interactBubble');
+                    if (!bubble) {
+                        bubble = document.createElement('div');
+                        bubble.id = 'interactBubble';
+                        bubble.classList.add('speech-bubble');
+                        document.body.appendChild(bubble);
+                    }
+                    
+                    bubble.textContent = 'Pressione E para interagir';
+                    bubble.style.display = 'flex';
+                    bubble.style.opacity = '1';
+                    const canvasRect = canvas.getBoundingClientRect();
+                    bubble.style.left = `${canvasRect.left + (obj.x - cameraX) + obj.width / 2 - bubble.offsetWidth / 2}px`;
+                    bubble.style.top = `${canvasRect.top + player.y - 60}px`;
+
+                    if (keys['e'] || keys['E']) {
+                        handleObjectInteraction(obj);
+                        keys['e'] = false;
+                        keys['E'] = false;
+                    }
+                    
+                    // Mostra notificação se tiver um item ativo
+                    const activeItem = inventory.find(item => item.active && item.hasItem);
+                    if (activeItem) {
+                        showNotification(`Pressione U para usar ${activeItem.name}`, 100);
+                    }
+                }
+            });
+            
+            // Esconde o balão se não estiver perto de nada
+            const bubble = document.getElementById('interactBubble');
+            if (bubble && !nearObject) {
+                bubble.style.opacity = '0';
+                setTimeout(() => {
+                    if (bubble.style.opacity === '0') {
+                        bubble.style.display = 'none';
+                    }
+                }, 300);
+            }
+
+            // Verifica lembranças
+            for (const whisper of whispers) {
+                if (whisper.chapter <= currentChapter && Math.abs(player.x - whisper.x) < 70 && !whisper.shown) {
+                    showWhisper(whisper.text);
+                    whisper.shown = true;
+                    sounds.whisper.play();
+                }
+            }
+        }
+
+        function handleObjectInteraction(obj) {
+            switch (obj.action) {
+                case 'fireplace':
+                    if (obj.state === 'on') {
+                        obj.state = 'off';
+                        darknessOverlay.style.opacity = 0.7;
+                        sounds.fireplace.pause();
+                        sounds.wind.play();
+                        showDialog('Você apagou o fogo da lareira. A escuridão e o frio se instalam.');
+                    } else {
+                        obj.state = 'on';
+                        darknessOverlay.style.opacity = 0;
+                        sounds.fireplace.play();
+                        sounds.wind.pause();
+                        showDialog('Você acendeu o fogo da lareira. O calor reconfortante preenche a sala.');
+                    }
+                    break;
+                case 'clock':
+                    showDialog('São doze badaladas... A meia-noite chegou. O tempo da minha dor está quase no fim.');
+                    sounds.clock.play();
+                    setTimeout(() => {
+                        transitionToEnd();
+                    }, 4000);
+                    break;
+                case 'lenore':
+                    showDialog('Ah, Lenore... Sua memória é um eco de dor e saudade...');
+                    if (!inventory.find(i => i.id === 'portrait').hasItem) {
+                        addToInventory('portrait');
+                    }
+                    break;
+                case 'books':
+                    showDialog('Perdido em volumes estranhos e esquecidos do saber antigo, busco alívio para a minha tristeza...');
+                    if (!inventory.find(i => i.id === 'book').hasItem) {
+                        addToInventory('book');
+                    }
+                    break;
+                case 'pallasBust':
+                    if (raven.state === 'perched') {
+                        showDialog('O Corvo, imóvel no busto de Palas, parece sussurrar "Nunca mais" em minha mente...');
+                    } else {
+                        showDialog('O busto de Pallas, a deusa da sabedoria. Ela me observa, silenciosa, como se guardasse um segredo...');
+                    }
+                    break;
+                case 'door':
+                    if (!hasInteractedWithDoor) {
+                        showDialog('Abro a porta, mas encontro apenas escuridão e silêncio...');
+                        hasInteractedWithDoor = true;
+                        sounds.knock.play();
+                        setTimeout(() => showChapter(2), 4000);
+                    } else {
+                        showDialog('A porta está fechada. Nada há além de escuridão do outro lado.');
+                    }
+                    break;
+                case 'window':
+                    if (!hasInteractedWithWindow) {
+                        showDialog('Uma janela gradeada... Há um corvo insistente do lado de fora!');
+                        hasInteractedWithWindow = true;
+                        
+                        // Faz o corvo voar para o busto após interação com a janela
+                        if (raven.state === 'flying') {
+                            const pallasBust = objects.find(obj => obj.id === 'pallasBust');
+                            raven.targetX = pallasBust.x;
+                            raven.targetY = pallasBust.y + 20;
+                            raven.state = 'flyingToBust';
+                        }
+                        
+                        setTimeout(() => showChapter(4), 4000);
+                    } else {
+                        showDialog('A janela está fechada. O vento uiva lá fora.');
+                    }
+                    break;
+            }
+        }
+
+        function update(timestamp) {
+            if (gameEnded) return;
+            
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+            
+            updatePlayer();
+            updateCamera();
+            updateRaven();
+            updateInteractions();
+        }
+
+        function transitionToEnd() {
+            gameEnded = true;
+            const startX = player.x;
+            const startY = player.y;
+            const pallas = objects.find(obj => obj.id === 'finalPallas');
+            pallas.hidden = false;
+
+            function animateTransition(timestamp) {
+                if (!animateTransition.start) animateTransition.start = timestamp;
+                const progress = timestamp - animateTransition.start;
+                const duration = 2000;
+
+                const ratio = Math.min(progress / duration, 1);
+
+                player.x = startX + (pallas.x - startX) * ratio;
+
+                // Mantenha o player no chão
+                const groundY = canvas.height - images.grass.height - player.height;
+                player.y = groundY;
+
+                darknessOverlay.style.opacity = ratio;
+
+                if (ratio < 1) {
+                    requestAnimationFrame(animateTransition);
+                } else {
+                    gameEnded = true;
+                    endOverlay.style.display = 'flex';
+                    sounds.wind.play();
+                }
+            }
+            requestAnimationFrame(animateTransition);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Desenha o céu com efeito de paralaxe
+            const skyParallaxOffset = cameraX * 0.2;
+            const skyWidth = images.sky.width;
+            for (let i = -1; i * skyWidth < canvas.width + skyParallaxOffset; i++) {
+                ctx.drawImage(images.sky, i * skyWidth - skyParallaxOffset, 0, skyWidth, canvas.height);
+            }
+
+            // Desenha a grama com efeito de paralaxe
+            const grassParallaxOffset = cameraX;
+            const grassHeight = 64;
+            const yOffset = canvas.height - grassHeight;
+            const grassWidth = images.grass.width;
+            for (let i = -1; i * grassWidth < canvas.width + grassParallaxOffset; i++) {
+                ctx.drawImage(images.grass, i * grassWidth - grassParallaxOffset, yOffset, grassWidth, grassHeight);
+            }
+            player.y = yOffset - player.height;
+
+            // Desenha os objetos
+            objects.forEach(obj => {
+                if (obj.hidden || obj.chapter > currentChapter) return;
+                let imageToDraw = images[obj.id];
+                if (obj.action === 'fireplace') {
+                    imageToDraw = obj.state === 'on' ? images.fireplaceOn : images.fireplaceOff;
+                }
+                ctx.drawImage(imageToDraw, obj.x - cameraX, player.y + 16, obj.width, obj.height);
+            });
+
+            // Desenha o corvo
+            if (raven.state !== 'hidden' && !isRavenBlinking) {
+                ctx.drawImage(images.raven, raven.x - cameraX, raven.y, raven.width, raven.height);
+            }
+
+            // Desenha o narrador (personagem)
+            ctx.drawImage(images.narrator, player.x - cameraX, player.y, player.width, player.height);
+        }
+
+        function gameLoop(timestamp) {
+            if (gameEnded) return;
+            update(timestamp);
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function initGame() {
+            updateInventory();
+            sounds.fireplace.play();
+            lastTime = performance.now();
+            lastRavenAppearance = lastTime; // Inicializa a variável
+            gameLoop(lastTime);
+        }
+    </script>
+</body>
+
+</html>
