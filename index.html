@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +14,12 @@
             margin: 0;
             overflow: hidden;
             font-family: 'Georgia', serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 800px;
+            height: 600px;
         }
 
         canvas {
@@ -235,51 +240,53 @@
         }
     </style>
 </head>
-
 <body>
-    <div id="intro-overlay">
-        <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">O Corvo</h1>
-        <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
-            "Em uma meia-noite agreste, enquanto eu pensava, fraco e cansado, sobre muitos
-            volumes estranhos e esquecidos do saber antigo, e cabeceava, quase a dormir, ouviu-se de repente um leve
-            bater, como de alguém que suavemente batesse à porta do meu quarto..."
-        </p>
-        <p class="typewriter" style="margin-top: 40px; font-weight: bold; letter-spacing: 1px;">
-            Clique para começar esta jornada melancólica...
-        </p>
-    </div>
+    <div id="game-container">
+        <div id="intro-overlay">
+            <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">O Corvo</h1>
+            <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+                "Em uma meia-noite agreste, enquanto eu pensava, fraco e cansado, sobre muitos
+                volumes estranhos e esquecidos do saber antigo, e cabeceava, quase a dormir, ouviu-se de repente um leve
+                bater, como de alguém que suavemente batesse à porta do meu quarto..."
+            </p>
+            <p class="typewriter" style="margin-top: 40px; font-weight: bold; letter-spacing: 1px;">
+                Clique para começar esta jornada melancólica...
+            </p>
+        </div>
 
-    <div id="chapter-overlay">
-        <h2 id="chapter-title" style="font-size: 2.5em; animation: pulse 2s infinite; margin-bottom: 20px;"></h2>
-        <p id="chapter-text" style="font-style: italic; max-width: 800px; line-height: 1.6;"></p>
-        <p style="margin-top: 30px; font-weight: bold;">Clique para continuar...</p>
-    </div>
+        <div id="chapter-overlay">
+            <h2 id="chapter-title" style="font-size: 2.5em; animation: pulse 2s infinite; margin-bottom: 20px;"></h2>
+            <p id="chapter-text" style="font-style: italic; max-width: 800px; line-height: 1.6;"></p>
+            <p style="margin-top: 30px; font-weight: bold;">Clique para continuar...</p>
+        </div>
 
-    <div id="end-overlay">
-        <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">Nevermore...</h1>
-        <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
-            "E o Corvo, nunca se movendo, ainda está sentado, ainda está sentado
-            no pálido busto de Palas, logo acima da porta de meu aposento;
-            E seus olhos têm toda a aparência de um demônio que está sonhando,
-            E a luz da lâmpada, sobre ele fluindo, lança sua sombra no chão;
-            E minha alma, dessa sombra que flutua no chão,
-            Não se levantará - nunca mais!"
-        </p>
-    </div>
+        <div id="end-overlay">
+            <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">Nevermore...</h1>
+            <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+                "E o Corvo, nunca se movendo, ainda está sentado, ainda está sentado
+                no pálido busto de Palas, logo acima da porta de meu aposento;
+                E seus olhos têm toda a aparência de um demônio que está sonhando,
+                E a luz da lâmpada, sobre ele fluindo, lança sua sombra no chão;
+                E minha alma, dessa sombra que flutua no chão,
+                Não se levantará - nunca mais!"
+            </p>
+        </div>
 
-    <div id="darkness-overlay"></div>
-    <canvas id="gameCanvas"></canvas>
-    <div id="dialog-box"></div>
-    <div id="whisper-box"></div>
-    <div id="inventory"></div>
-    <div id="controls">
-        Movimento: A/D ou Setas ← →<br>
-        Interagir: E<br>
-        Inventário: 1-5
+        <div id="darkness-overlay"></div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="dialog-box"></div>
+        <div id="whisper-box"></div>
+        <div id="inventory"></div>
+        <div id="controls">
+            Movimento: A/D ou Setas ← →<br>
+            Interagir: E<br>
+            Inventário: 1-5
+        </div>
+        <div id="interaction-notification"></div>
     </div>
-    <div id="interaction-notification"></div>
 
     <script>
+        // Declaração única de todas as variáveis
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const introOverlay = document.getElementById('intro-overlay');
@@ -296,16 +303,16 @@
         canvas.width = 800;
         canvas.height = 600;
 
-        // Sons (placeholders - você precisará adicionar os arquivos de áudio)
+        // Sons (placeholders)
         const sounds = {
-            raven: new Audio(), // 'sounds/raven.mp3'
-            knock: new Audio(), // 'sounds/knock.mp3'
-            whisper: new Audio(), // 'sounds/whisper.mp3'
-            fireplace: new Audio(), // 'sounds/fireplace.mp3'
-            page: new Audio(), // 'sounds/page.mp3'
-            clock: new Audio(), // 'sounds/clock.mp3'
-            wind: new Audio(), // 'sounds/wind.mp3'
-            itemPickup: new Audio(), // 'sounds/item-pickup.mp3'
+            raven: new Audio(),
+            knock: new Audio(),
+            whisper: new Audio(),
+            fireplace: new Audio(),
+            page: new Audio(),
+            clock: new Audio(),
+            wind: new Audio(),
+            itemPickup: new Audio(),
         };
 
         // Configurar sons
@@ -317,6 +324,7 @@
             }
         }
 
+        // Definição das imagens - referenciando a pasta imgs
         const images = {};
         const imageFiles = {
             grass: 'imgs/grass.png',
@@ -326,35 +334,123 @@
             fireplaceOn: 'imgs/lareira.png',
             fireplaceOff: 'imgs/lareiraApagada.png',
             clock: 'imgs/relogio.png',
-            pallas: 'https://placehold.co/64x64/D3D3D3/000?text=Pallas',
-            lenorePortrait: 'https://placehold.co/48x64/E6D5B8/000?text=Retrato',
-            bookshelf: 'https://placehold.co/64x64/A0522D/FFF?text=Livros',
-            pallasBust: 'https://placehold.co/48x64/D3D3D3/000?text=Busto',
-            door: 'https://placehold.co/64x64/8B4513/FFF?text=Porta',
-            window: 'https://placehold.co/64x64/87CEEB/000?text=Janela'
+            pallas: 'imgs/pallas.png',
+            lenorePortrait: 'imgs/retrato.png',
+            bookshelf: 'imgs/livros.png',
+            pallasBust: 'imgs/busto.png',
+            door: 'imgs/porta.png',
+            window: 'imgs/janela.png'
         };
 
+        // Função para criar fallback de imagem caso o arquivo não seja encontrado
+        function generateFallbackImage(color, text, width = 64, height = 64) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Texto
+            ctx.fillStyle = '#000';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, width/2, height/2);
+            
+            // Borda
+            ctx.strokeStyle = '#555';
+            ctx.strokeRect(0, 0, width, height);
+            
+            return canvas;
+        }
+
+        // Carregar imagens
         let imagesLoaded = 0;
         const totalImages = Object.keys(imageFiles).length;
 
-        for (const key in imageFiles) {
-            images[key] = new Image();
-            images[key].src = imageFiles[key];
-            images[key].onload = () => {
-                imagesLoaded++;
-                if (imagesLoaded === totalImages) {
-                    introOverlay.addEventListener('click', () => {
-                        introOverlay.style.display = 'none';
-                        showChapter(0);
-                    });
-                }
-            };
+        function loadImages() {
+            for (const key in imageFiles) {
+                images[key] = new Image();
+                images[key].onload = () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        console.log('Todas as imagens carregadas com sucesso');
+                        // Iniciar o jogo quando todas as imagens estiverem carregadas
+                        introOverlay.addEventListener('click', () => {
+                            introOverlay.style.display = 'none';
+                            showChapter(0);
+                        });
+                    }
+                };
+                images[key].onerror = () => {
+                    console.warn(`Erro ao carregar imagem: ${imageFiles[key]}. Usando fallback.`);
+                    // Criar fallback para imagem não carregada
+                    switch(key) {
+                        case 'grass':
+                            images[key] = generateFallbackImage('#2E8B57', 'Grama', 64, 64);
+                            break;
+                        case 'sky':
+                            images[key] = generateFallbackImage('#1E3A8A', 'Céu Noturno', 64, 64);
+                            break;
+                        case 'narrator':
+                            images[key] = generateFallbackImage('#8B4513', 'Narrador', 32, 64);
+                            break;
+                        case 'raven':
+                            images[key] = generateFallbackImage('#000', 'Corvo', 32, 32);
+                            break;
+                        case 'fireplaceOn':
+                            images[key] = generateFallbackImage('#FF4500', 'Lareira Acesa', 64, 64);
+                            break;
+                        case 'fireplaceOff':
+                            images[key] = generateFallbackImage('#8B4513', 'Lareira Apagada', 64, 64);
+                            break;
+                        case 'clock':
+                            images[key] = generateFallbackImage('#DAA520', 'Relógio', 48, 64);
+                            break;
+                        case 'pallas':
+                            images[key] = generateFallbackImage('#D3D3D3', 'Pallas', 64, 64);
+                            break;
+                        case 'lenorePortrait':
+                            images[key] = generateFallbackImage('#E6D5B8', 'Retrato', 48, 64);
+                            break;
+                        case 'bookshelf':
+                            images[key] = generateFallbackImage('#A0522D', 'Livros', 64, 64);
+                            break;
+                        case 'pallasBust':
+                            images[key] = generateFallbackImage('#D3D3D3', 'Busto', 48, 64);
+                            break;
+                        case 'door':
+                            images[key] = generateFallbackImage('#8B4513', 'Porta', 64, 64);
+                            break;
+                        case 'window':
+                            images[key] = generateFallbackImage('#87CEEB', 'Janela', 64, 64);
+                            break;
+                        default:
+                            images[key] = generateFallbackImage('#666', key, 64, 64);
+                    }
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        console.log('Todas as imagens carregadas (com fallbacks)');
+                        introOverlay.addEventListener('click', () => {
+                            introOverlay.style.display = 'none';
+                            showChapter(0);
+                        });
+                    }
+                };
+                images[key].src = imageFiles[key];
+            }
         }
+
+        // Iniciar carregamento das imagens
+        loadImages();
 
         // Variáveis do Jogo
         let cameraX = 0;
         let player = {
-            x: 0,
+            x: 400,
             y: 0,
             width: 32,
             height: 64,
@@ -402,7 +498,7 @@
 
         const raven = {
             x: 0, y: 0, width: 32, height: 32,
-            state: 'hidden', // hidden, flying, perched
+            state: 'hidden',
             targetX: 0,
             targetY: 0,
             speed: 3
@@ -416,6 +512,18 @@
             { id: 'feather', name: 'Pena', active: false, hasItem: false, usage: 'examine' }
         ];
 
+        // Sussurros (memórias/poemas) espalhados pelo ambiente
+        const whispers = [
+            { x: 500, text: "'Ah, distintamente me lembro... era no gélido dezembro'", chapter: 0, shown: false },
+            { x: 1200, text: "'E cada brasa separada projetava seu fantasma no chão'", chapter: 0, shown: false },
+            { x: 2000, text: "'Ansioso pelo amanhecer - em vão eu procurava buscar'", chapter: 1, shown: false },
+            { x: 3000, text: "'De meus livros um surcease à tristeza - tristeza pela perdida Lenore'", chapter: 2, shown: false },
+            { x: 4000, text: "'Pela rara e radiante donzela que os anjos chamam Lenore'", chapter: 2, shown: false },
+            { x: 5500, text: "'Profundamente enevoou aquela escura meia-noite'", chapter: 3, shown: false },
+            { x: 6500, text: "'E o único palavra dita foi uma palavra sussurrada: Lenore?'", chapter: 4, shown: false },
+            { x: 7200, text: "'E o corvo, nunca pousando, ainda está sentado, ainda está sentado'", chapter: 4, shown: false }
+        ];
+
         let isPlaying = false;
         let isRavenBlinking = false;
         let ravenBlinkTimeout;
@@ -426,7 +534,7 @@
         let ravenEntered = false;
         let lastTime = 0;
         let nearObject = null;
-        let lastRavenAppearance = 0; // Variável declarada corretamente
+        let lastRavenAppearance = 0;
 
         const keys = {};
         document.addEventListener('keydown', (e) => {
@@ -870,12 +978,12 @@
                 const progress = timestamp - animateTransition.start;
                 const duration = 2000;
 
-                const ratio = Math.min(progress / duration, 1);
+                const ratio = Math.min(progress/duration, 1);
 
                 player.x = startX + (pallas.x - startX) * ratio;
 
                 // Mantenha o player no chão
-                const groundY = canvas.height - images.grass.height - player.height;
+                const groundY = canvas.height - 64 - player.height;
                 player.y = groundY;
 
                 darknessOverlay.style.opacity = ratio;
@@ -941,10 +1049,9 @@
             updateInventory();
             sounds.fireplace.play();
             lastTime = performance.now();
-            lastRavenAppearance = lastTime; // Inicializa a variável
+            lastRavenAppearance = lastTime;
             gameLoop(lastTime);
         }
     </script>
 </body>
-
 </html>
