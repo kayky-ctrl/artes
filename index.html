@@ -159,6 +159,33 @@
             animation: pulse 2s infinite;
         }
 
+        #darkness-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            opacity: 0;
+            transition: opacity 2s linear;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        #nevermore-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            font-family: "Cinzel", serif;
+            color: white;
+            opacity: 0;
+            transition: opacity 2s linear;
+            z-index: 30;
+        }
+
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -219,6 +246,8 @@
 
         <div id="darkness-overlay"></div>
         <canvas id="gameCanvas" width="900" height="600"></canvas>
+        <div id="darkness-overlay"></div>
+        <div id="nevermore-text">NEVERMORE</div>
         <div id="dialog-box"></div>
         <div id="whisper-box"></div>
         <div id="inventory"></div>
@@ -279,9 +308,9 @@
             grass: 'imgs/grass.png',
             sky: 'imgs/sky.png',
             narratorRight1: 'imgs/2.png',
-            narratorRight2: 'imgs/2.png',
+            narratorRight2: 'imgs/1.png',
             narratorLeft1: 'imgs/1.png',
-            narratorLeft2: 'imgs/1.png',
+            narratorLeft2: 'imgs/2.png',
             narratorIdleRight: 'imgs/3.png',
             narratorIdleLeft: 'imgs/4.png',
             raven: 'imgs/raven.png',
@@ -289,9 +318,9 @@
             fireplaceOff: 'imgs/lareiraApagada.png',
             clock: 'imgs/relogio.png',
             pallas: 'imgs/pallas.png',
-            lenorePortrait: 'imgs/retrato.png',
-            bookshelf: 'imgs/livros.png',
-            pallasBust: 'imgs/busto.png',
+            lenorePortrait: 'imgs/LenoreRetrait.jpg',
+            bookshelf: 'imgs/Estante.png',
+            pallasBust: 'imgs/Busto.png',
             doorClosed: 'imgs/portaFechando.png',
             doorOpen: 'imgs/portaAbrindo.png', // se não existir, fallback será usado
             window: 'imgs/janela.png'
@@ -354,14 +383,14 @@
 
         // Objetos do cenário: x em coordenadas do mundo, y é deslocamento acima do chão (px)
         const objects = [
-            { id: 'door', x: 800, y: 0, width: 96, height: 160, type: 'interactable', action: 'door', chapter: 0, doorState: 'closed', doorAnimTimer: 0, doorAnimDuration: 600 },
-            { id: 'window', x: 1500, y: 0, width: 120, height: 140, type: 'interactable', action: 'window', chapter: 2, open: false },
-            { id: 'fireplace', x: 2500, y: 0, width: 180, height: 160, state: 'on', type: 'interactable', action: 'fireplace', chapter: 0 },
-            { id: 'lenorePortrait', x: 3500, y: 20, width: 100, height: 140, type: 'interactable', action: 'lenore', chapter: 0 },
-            { id: 'bookshelf', x: 4500, y: 0, width: 240, height: 220, type: 'interactable', action: 'books', chapter: 0 },
+            { id: 'door', x: 800, y: -90, width: 200, height: 260, type: 'interactable', action: 'door', chapter: 0, doorState: 'closed', doorAnimTimer: 0, doorAnimDuration: 600 },
+            { id: 'window', x: 1500, y: -15, width: 120, height: 140, type: 'interactable', action: 'window', chapter: 2, open: false },
+            { id: 'fireplace', x: 2500, y: -45, width: 180, height: 160, state: 'on', type: 'interactable', action: 'fireplace', chapter: 0 },
+            { id: 'lenorePortrait', x: 3500, y: 5, width: 100, height: 140, type: 'interactable', action: 'lenore', chapter: 0 },
+            { id: 'bookshelf', x: 4500, y: -15, width: 220, height: 200, type: 'interactable', action: 'books', chapter: 0 },
             { id: 'pallasBust', x: 6000, y: 0, width: 140, height: 180, type: 'interactable', action: 'pallasBust', chapter: 4 },
-            { id: 'clock', x: 7000, y: 20, width: 100, height: 120, type: 'interactable', action: 'clock', chapter: 0 },
-            { id: 'finalPallas', x: 7500, y: 0, width: 160, height: 220, type: 'static', hidden: true, chapter: 4 }
+            { id: 'clock', x: 7000, y: -20, width: 100, height: 120, type: 'interactable', action: 'clock', chapter: 0 },
+            { id: 'finalDarkness', x: 7500, y: 0, width: 160, height: 220, type: 'trigger', hidden: true, chapter: 4 }
         ];
 
         // Corvo com comportamento de voo e rasante
@@ -400,12 +429,12 @@
             { x: 6500, text: "'E o único palavra dita foi uma palavra sussurrada: Lenore?'", chapter: 4, shown: false },
             { x: 7200, text: "'E o corvo, nunca pousando, ainda está sentado, ainda está sentado'", chapter: 4, shown: false }
         ];
-        
+
         const player = {
             worldX: 400,
-            worldY: -40,   // <<< empurra o personagem para baixo (antes 0)
-            width: 150,
-            height: 240,
+            worldY: -150,   // <<< empurra o personagem para baixo (antes 0)
+            width: 300,
+            height: 380,
             vx: 0,
             maxSpeed: 220,
             accel: 1600,
@@ -452,6 +481,49 @@
             }
         });
 
+        function triggerFinalLoop() {
+            const darkness = document.getElementById("darkness-overlay");
+            const nevermore = document.getElementById("nevermore-text");
+
+            // Tela escurece
+            darkness.style.opacity = 1;
+
+            // Após 2s, mostra texto e toca som
+            setTimeout(() => {
+                nevermore.style.opacity = 1;
+                playSound("raven_caw.mp3"); // substitua pelo seu arquivo
+            }, 2000);
+
+            // Após 6s, reseta o jogo
+            setTimeout(() => {
+                darkness.style.opacity = 0;
+                nevermore.style.opacity = 0;
+                resetGame();
+            }, 6000);
+        }
+
+        // Reset completo do jogo
+        function resetGame() {
+            // Posição inicial do jogador
+            player.x = 50;
+            player.y = groundY;
+
+            // Reinicia capítulo
+            currentChapter = 1;
+
+            // Limpa inventário e diálogos
+            inventory = [];
+            activeDialog = null;
+            activeWhisper = null;
+
+            // Reseta objetos
+            objects.forEach(obj => {
+                if (obj.hidden !== undefined) {
+                    obj.hidden = (obj.chapter && obj.chapter !== 1);
+                }
+            });
+        }
+
         // UI funções
         function showChapter(index) {
             if (index >= chapters.length) {
@@ -473,15 +545,30 @@
             dialogBox.textContent = text;
             dialogBox.style.display = 'block';
             dialogBox.style.opacity = 1;
-            setTimeout(() => { dialogBox.style.opacity = 0; setTimeout(() => dialogBox.style.display = 'none', 300); }, duration);
+
+            // sempre posiciona acima da grama
+            dialogBox.style.bottom = "200px";
+
+            setTimeout(() => {
+                dialogBox.style.opacity = 0;
+                setTimeout(() => dialogBox.style.display = 'none', 300);
+            }, duration);
         }
 
         function showWhisper(text, duration = 3800) {
             whisperBox.textContent = text;
             whisperBox.style.display = 'block';
             whisperBox.style.opacity = 1;
-            setTimeout(() => { whisperBox.style.opacity = 0; setTimeout(() => whisperBox.style.display = 'none', 300); }, duration);
+
+            // idem
+            whisperBox.style.bottom = "200px";
+
+            setTimeout(() => {
+                whisperBox.style.opacity = 0;
+                setTimeout(() => whisperBox.style.display = 'none', 300);
+            }, duration);
         }
+
 
         function showNotification(text, duration = 2200) {
             interactionNotification.textContent = text;
@@ -546,8 +633,8 @@
                 raven.state = 'flying';
                 raven.worldX = -300;
                 raven.worldY = 340; // alto no céu
-                raven.targetX = objects.find(o => o.id === 'window').x - 80; // aproximar da janela
-                raven.targetY = objects.find(o => o.id === 'window').y + 20; // altura da janela (relativa ao chão)
+                raven.targetX = objects.find(o => o.id === 'window').x - 60; // aproximar da janela
+                raven.targetY = objects.find(o => o.id === 'window').y + 50; // altura da janela (relativa ao chão)
                 lastRavenAppearance = now;
                 sounds.raven.play();
             }
@@ -577,7 +664,7 @@
                     // destino do rasante: atravessar a janela para dentro do quarto (menor worldY -> mais próximo do chão)
                     const wnd = objects.find(o => o.id === 'window');
                     raven.targetX = wnd.x + (wnd.width / 2) + 80; // atravessa para dentro
-                    raven.targetY = wnd.y - 40; // passar por dentro, mais baixo que janela para efeito de rasante
+                    raven.targetY = wnd.y + 30; // passar por dentro, mais baixo que janela para efeito de rasante
                 }
             } else if (raven.state === 'diving') {
                 const tx = raven.targetX, ty = raven.targetY;
@@ -667,6 +754,35 @@
                         nextX = Math.max(nextX, doorRight + (player.width / 2) + buffer);
                         player.vx = 0;
                     }
+                }
+            }
+
+            function update() {
+                // Movimento básico (setas)
+                if (keys['ArrowRight']) player.x += player.speed;
+                if (keys['ArrowLeft']) player.x -= player.speed;
+
+                // Trigger do final
+                if (checkCollision(player, finalDarkness)) {
+                    triggerFinalLoop();
+                }
+
+                draw();
+                requestAnimationFrame(update);
+            }
+
+            // Desenho do jogador e objetos
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Jogador
+                ctx.fillStyle = "white";
+                ctx.fillRect(player.x, player.y, player.width, player.height);
+
+                // Trigger final
+                if (!finalDarkness.hidden) {
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(finalDarkness.x, finalDarkness.y, finalDarkness.width, finalDarkness.height);
                 }
             }
 
