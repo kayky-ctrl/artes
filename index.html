@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Raven: Uma Jornada Melancólica</title>
     <style>
         body {
@@ -18,7 +19,8 @@
 
         #game-container {
             position: relative;
-            width: 800px;
+            width: 900px;
+            /* aumentei levemente a largura para dar mais espaço */
             height: 600px;
         }
 
@@ -27,6 +29,7 @@
             border: 2px solid #555;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             position: relative;
+            display: block;
         }
 
         #intro-overlay,
@@ -76,13 +79,13 @@
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             background: rgba(0, 0, 0, 0.85);
             color: #fff;
-            padding: 20px;
+            padding: 18px;
             border: 1px solid #777;
             text-align: center;
-            font-size: 1.1em;
+            font-size: 1.05em;
             display: none;
             z-index: 50;
             border-radius: 8px;
@@ -93,8 +96,8 @@
 
         #inventory {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 18px;
+            right: 18px;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
@@ -104,9 +107,9 @@
         }
 
         .inventory-item {
-            width: 32px;
-            height: 32px;
-            background: rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid #777;
             border-radius: 3px;
             display: flex;
@@ -114,64 +117,36 @@
             align-items: center;
             font-size: 12px;
             color: white;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
             cursor: pointer;
         }
 
         .inventory-item.active {
             border: 1px solid #fff;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-            transform: scale(1.1);
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+            transform: scale(1.08);
         }
 
         .inventory-item.has-item {
-            background: rgba(100, 100, 200, 0.3);
-        }
-
-        .speech-bubble {
-            position: absolute;
-            width: 150px;
-            height: 50px;
-            display: none;
-            z-index: 50;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="150" height="50" viewBox="0 0 150 50"><path d="M10 0 H140 C145.523 0 150 4.477 150 10 V40 C150 45.523 145.523 50 140 50 H30 L10 40 V10 C10 4.477 14.477 0 20 0 Z" fill="%23FFFFFF" stroke="%23000000" stroke-width="2"/></svg>');
-            background-size: contain;
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: black;
-            padding: 5px;
-            box-sizing: border-box;
-            text-align: center;
-            bottom: 60px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            background: rgba(100, 100, 200, 0.28);
         }
 
         #controls {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
+            bottom: 18px;
+            left: 18px;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
             color: white;
             font-size: 12px;
             z-index: 60;
-            opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-
-        #controls:hover {
-            opacity: 1;
+            opacity: 0.85;
         }
 
         #interaction-notification {
             position: absolute;
-            bottom: 180px;
+            bottom: 170px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.7);
@@ -188,6 +163,7 @@
             from {
                 opacity: 0;
             }
+
             to {
                 opacity: 1;
             }
@@ -198,95 +174,64 @@
                 transform: translateX(-50%) scale(1);
                 box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
             }
+
             50% {
-                transform: translateX(-50%) scale(1.05);
-                box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+                transform: translateX(-50%) scale(1.04);
+                box-shadow: 0 0 8px rgba(255, 255, 255, 0.18);
             }
+
             100% {
                 transform: translateX(-50%) scale(1);
                 box-shadow: 0 0 0 rgba(255, 255, 255, 0.1);
             }
         }
-
-        @keyframes typewriter {
-            from {
-                width: 0;
-            }
-            to {
-                width: 100%;
-            }
-        }
-
-        @keyframes ravenFlyIn {
-            0% {
-                transform: translateX(-100px) translateY(-100px) scale(0.5);
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(0) translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .typewriter {
-            overflow: hidden;
-            white-space: nowrap;
-            margin: 0 auto;
-            animation: typewriter 4s steps(40) 1s both;
-        }
-
-        .raven-fly-in {
-            animation: ravenFlyIn 2s forwards;
-        }
     </style>
 </head>
+
 <body>
     <div id="game-container">
         <div id="intro-overlay">
-            <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">O Corvo</h1>
-            <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+            <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 24px;">O Corvo</h1>
+            <p style="font-style: italic; max-width: 900px; line-height: 1.6;">
                 "Em uma meia-noite agreste, enquanto eu pensava, fraco e cansado, sobre muitos
                 volumes estranhos e esquecidos do saber antigo, e cabeceava, quase a dormir, ouviu-se de repente um leve
                 bater, como de alguém que suavemente batesse à porta do meu quarto..."
             </p>
-            <p class="typewriter" style="margin-top: 40px; font-weight: bold; letter-spacing: 1px;">
+            <p style="margin-top: 28px; font-weight: bold; letter-spacing: 1px;">
                 Clique para começar esta jornada melancólica...
             </p>
         </div>
 
         <div id="chapter-overlay">
             <h2 id="chapter-title" style="font-size: 2.5em; animation: pulse 2s infinite; margin-bottom: 20px;"></h2>
-            <p id="chapter-text" style="font-style: italic; max-width: 800px; line-height: 1.6;"></p>
+            <p id="chapter-text" style="font-style: italic; max-width: 900px; line-height: 1.6;"></p>
             <p style="margin-top: 30px; font-weight: bold;">Clique para continuar...</p>
         </div>
 
         <div id="end-overlay">
             <h1 style="font-size: 3em; animation: pulse 2s infinite; margin-bottom: 30px;">Nevermore...</h1>
-            <p style="font-style: italic; max-width: 800px; line-height: 1.6;">
+            <p style="font-style: italic; max-width: 900px; line-height: 1.6;">
                 "E o Corvo, nunca se movendo, ainda está sentado, ainda está sentado
                 no pálido busto de Palas, logo acima da porta de meu aposento;
-                E seus olhos têm toda a aparência de um demônio que está sonhando,
-                E a luz da lâmpada, sobre ele fluindo, lança sua sombra no chão;
-                E minha alma, dessa sombra que flutua no chão,
-                Não se levantará - nunca mais!"
+                E seus olhos têm toda a aparência de um demônio que está sonhando..."
             </p>
         </div>
 
         <div id="darkness-overlay"></div>
-        <canvas id="gameCanvas"></canvas>
+        <canvas id="gameCanvas" width="900" height="600"></canvas>
         <div id="dialog-box"></div>
         <div id="whisper-box"></div>
         <div id="inventory"></div>
         <div id="controls">
-            Movimento: A/D ou Setas ← →<br>
-            Interagir: E<br>
+            Movimento: A/D ou ← →<br />
+            Interagir: E (ou U para usar item)<br />
             Inventário: 1-5
         </div>
         <div id="interaction-notification"></div>
     </div>
 
     <script>
-        // Declaração única de todas as variáveis
+        // --- Configurações iniciais e referências DOM
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const introOverlay = document.getElementById('intro-overlay');
@@ -300,10 +245,13 @@
         const chapterText = document.getElementById('chapter-text');
         const interactionNotification = document.getElementById('interaction-notification');
 
-        canvas.width = 800;
-        canvas.height = 600;
+        // Mundo
+        const WORLD_WIDTH = 8000;
+        const GROUND_HEIGHT = 100; // altura do chão em px
+        const CANVAS_W = canvas.width;
+        const CANVAS_H = canvas.height;
 
-        // Sons (placeholders)
+        // Sons placeholders
         const sounds = {
             raven: new Audio(),
             knock: new Audio(),
@@ -313,23 +261,29 @@
             clock: new Audio(),
             wind: new Audio(),
             itemPickup: new Audio(),
+            footsteps: new Audio()
         };
-
-        // Configurar sons
-        for (const key in sounds) {
-            sounds[key].volume = 0.5;
-            sounds[key].loop = key === 'fireplace' || key === 'wind';
-            if (key === 'wind') {
-                sounds[key].volume = 0.3;
-            }
+        for (const k in sounds) {
+            sounds[k].volume = 0.5;
+            sounds[k].loop = false;
         }
+        sounds.fireplace.loop = true;
+        sounds.wind.loop = true;
+        sounds.footsteps.loop = true;
+        sounds.wind.volume = 0.25;
+        sounds.footsteps.volume = 0.22;
 
-        // Definição das imagens - referenciando a pasta imgs
+        // Imagens (mesmos nomes do seu projeto)
         const images = {};
         const imageFiles = {
             grass: 'imgs/grass.png',
             sky: 'imgs/sky.png',
-            narrator: 'imgs/narrator.png',
+            narratorRight1: 'imgs/2.png',
+            narratorRight2: 'imgs/2.png',
+            narratorLeft1: 'imgs/1.png',
+            narratorLeft2: 'imgs/1.png',
+            narratorIdleRight: 'imgs/3.png',
+            narratorIdleLeft: 'imgs/4.png',
             raven: 'imgs/raven.png',
             fireplaceOn: 'imgs/lareira.png',
             fireplaceOff: 'imgs/lareiraApagada.png',
@@ -338,181 +292,104 @@
             lenorePortrait: 'imgs/retrato.png',
             bookshelf: 'imgs/livros.png',
             pallasBust: 'imgs/busto.png',
-            door: 'imgs/porta.png',
+            doorClosed: 'imgs/portaFechando.png',
+            doorOpen: 'imgs/portaAbrindo.png', // se não existir, fallback será usado
             window: 'imgs/janela.png'
         };
 
-        // Função para criar fallback de imagem caso o arquivo não seja encontrado
-        function generateFallbackImage(color, text, width = 64, height = 64) {
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            
-            // Fundo
-            ctx.fillStyle = color;
-            ctx.fillRect(0, 0, width, height);
-            
-            // Texto
-            ctx.fillStyle = '#000';
-            ctx.font = '10px Arial';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(text, width/2, height/2);
-            
-            // Borda
-            ctx.strokeStyle = '#555';
-            ctx.strokeRect(0, 0, width, height);
-            
-            return canvas;
+        function generateFallbackImage(color, text, w = 64, h = 64) {
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const cx = c.getContext('2d');
+            cx.fillStyle = color; cx.fillRect(0, 0, w, h);
+            cx.fillStyle = '#000';
+            cx.font = '12px Arial';
+            cx.textAlign = 'center';
+            cx.textBaseline = 'middle';
+            cx.fillText(text, w / 2, h / 2);
+            cx.strokeStyle = '#444';
+            cx.strokeRect(0, 0, w, h);
+            return c;
         }
 
-        // Carregar imagens
         let imagesLoaded = 0;
         const totalImages = Object.keys(imageFiles).length;
-
         function loadImages() {
             for (const key in imageFiles) {
                 images[key] = new Image();
                 images[key].onload = () => {
                     imagesLoaded++;
-                    if (imagesLoaded === totalImages) {
-                        console.log('Todas as imagens carregadas com sucesso');
-                        // Iniciar o jogo quando todas as imagens estiverem carregadas
-                        introOverlay.addEventListener('click', () => {
-                            introOverlay.style.display = 'none';
-                            showChapter(0);
-                        });
-                    }
+                    if (imagesLoaded === totalImages) onAllImagesLoaded();
                 };
                 images[key].onerror = () => {
-                    console.warn(`Erro ao carregar imagem: ${imageFiles[key]}. Usando fallback.`);
-                    // Criar fallback para imagem não carregada
-                    switch(key) {
-                        case 'grass':
-                            images[key] = generateFallbackImage('#2E8B57', 'Grama', 64, 64);
-                            break;
-                        case 'sky':
-                            images[key] = generateFallbackImage('#1E3A8A', 'Céu Noturno', 64, 64);
-                            break;
-                        case 'narrator':
-                            images[key] = generateFallbackImage('#8B4513', 'Narrador', 32, 64);
-                            break;
-                        case 'raven':
-                            images[key] = generateFallbackImage('#000', 'Corvo', 32, 32);
-                            break;
-                        case 'fireplaceOn':
-                            images[key] = generateFallbackImage('#FF4500', 'Lareira Acesa', 64, 64);
-                            break;
-                        case 'fireplaceOff':
-                            images[key] = generateFallbackImage('#8B4513', 'Lareira Apagada', 64, 64);
-                            break;
-                        case 'clock':
-                            images[key] = generateFallbackImage('#DAA520', 'Relógio', 48, 64);
-                            break;
-                        case 'pallas':
-                            images[key] = generateFallbackImage('#D3D3D3', 'Pallas', 64, 64);
-                            break;
-                        case 'lenorePortrait':
-                            images[key] = generateFallbackImage('#E6D5B8', 'Retrato', 48, 64);
-                            break;
-                        case 'bookshelf':
-                            images[key] = generateFallbackImage('#A0522D', 'Livros', 64, 64);
-                            break;
-                        case 'pallasBust':
-                            images[key] = generateFallbackImage('#D3D3D3', 'Busto', 48, 64);
-                            break;
-                        case 'door':
-                            images[key] = generateFallbackImage('#8B4513', 'Porta', 64, 64);
-                            break;
-                        case 'window':
-                            images[key] = generateFallbackImage('#87CEEB', 'Janela', 64, 64);
-                            break;
-                        default:
-                            images[key] = generateFallbackImage('#666', key, 64, 64);
-                    }
+                    // fallback generico
+                    if (key.includes('narrator')) images[key] = generateFallbackImage('#8B4513', 'Narrador', 64, 128);
+                    else if (key === 'sky') images[key] = generateFallbackImage('#1E3A8A', 'Céu', 200, 200);
+                    else if (key === 'grass') images[key] = generateFallbackImage('#2E8B57', 'Grama', 200, 100);
+                    else if (key === 'raven') images[key] = generateFallbackImage('#000', 'Corvo', 64, 48);
+                    else images[key] = generateFallbackImage('#666', key, 64, 64);
                     imagesLoaded++;
-                    if (imagesLoaded === totalImages) {
-                        console.log('Todas as imagens carregadas (com fallbacks)');
-                        introOverlay.addEventListener('click', () => {
-                            introOverlay.style.display = 'none';
-                            showChapter(0);
-                        });
-                    }
+                    if (imagesLoaded === totalImages) onAllImagesLoaded();
                 };
                 images[key].src = imageFiles[key];
             }
         }
 
-        // Iniciar carregamento das imagens
+        function onAllImagesLoaded() {
+            introOverlay.addEventListener('click', () => {
+                introOverlay.style.display = 'none';
+                showChapter(0);
+            });
+        }
         loadImages();
 
-        // Variáveis do Jogo
-        let cameraX = 0;
-        let player = {
-            x: 400,
-            y: 0,
-            width: 32,
-            height: 64,
-            speedX: 0,
-            maxSpeed: 3,
-            acceleration: 0.2,
-            deceleration: 0.9,
-            targetSpeed: 0
-        };
-
-        // Capítulos da história
+        // Capítulos (mantidos)
         const chapters = [
-            {
-                title: "O Início da Agonia",
-                text: "Era uma vez uma meia-noite lúgubre, e eu, debruçado sobre livros esquecidos, buscava em vão alívio para minha dor - dor pela perda de Lenore, a radiante donzela que os anjos chamavam Lenore - nome que agora é só um eco, apenas isso e nada mais."
-            },
-            {
-                title: "O Sussurro na Escuridão",
-                text: "Enquanto eu cabeceava, quase adormecido, ouvi de repente um leve bater, como se alguém suavemente batesse à porta do meu quarto. 'É um visitante', murmurei para mim mesmo, 'batendo à porta do meu quarto - apenas isso, e nada mais'."
-            },
-            {
-                title: "A Chegada do Mensageiro",
-                text: "A porta abri; escuridão profunda, e nada mais. Olhando para as trevas, fiquei ali, duvidoso, sonhando sonhos que nenhum mortal ousara sonhar até então. Mas o silêncio não foi quebrado, e a quietude não deu sinal."
-            },
-            {
-                title: "O Corvo da Antiga Era",
-                text: "E então, com o bater de cortinas, ouvi um batido mais forte do que antes. 'Com certeza', disse eu, 'isso é algo na minha janela grade. Deixemos ver, então, o que está ali, e exploremos este mistério'."
-            },
-            {
-                title: "Nunca Mais",
-                text: "Abri a janela e, com agitado bater de asas, entrou um majestoso Corvo dos santos dias idos. Ele não fez nenhuma reverência, não parou nem hesitou; mas, com ar de lorde ou lady, pousou sobre o busto de Palas, logo acima da porta de meu aposento - pousou, e nada mais."
-            }
+            { title: "O Início da Agonia", text: "Era uma vez uma meia-noite lúgubre..." },
+            { title: "O Sussurro na Escuridão", text: "Enquanto eu cabeceava, quase adormecido..." },
+            { title: "A Chegada do Mensageiro", text: "A porta abri; escuridão profunda, e nada mais." },
+            { title: "O Corvo da Antiga Era", text: "E então, com o bater de cortinas, ouvi um batido mais forte." },
+            { title: "Nunca Mais", text: "Abri a janela e, com agitado bater de asas, entrou um majestoso Corvo..." }
         ];
 
+        // Objetos do cenário: x em coordenadas do mundo, y é deslocamento acima do chão (px)
         const objects = [
-            { id: 'door', x: 800, y: 0, width: 64, height: 64, type: 'interactable', action: 'door', chapter: 1 },
-            { id: 'window', x: 1500, y: 50, width: 64, height: 64, type: 'interactable', action: 'window', chapter: 3 },
-            { id: 'fireplace', x: 2500, y: 0, width: 64, height: 64, state: 'on', type: 'interactable', action: 'fireplace', chapter: 0 },
-            { id: 'lenorePortrait', x: 3500, y: 50, width: 48, height: 64, type: 'interactable', action: 'lenore', chapter: 0 },
-            { id: 'bookshelf', x: 4500, y: 0, width: 64, height: 64, type: 'interactable', action: 'books', chapter: 0 },
-            { id: 'pallasBust', x: 6000, y: 50, width: 48, height: 64, type: 'interactable', action: 'pallasBust', chapter: 4 },
-            { id: 'clock', x: 7000, y: 50, width: 48, height: 64, type: 'interactable', action: 'clock', chapter: 0 },
-            { id: 'finalPallas', x: 7500, y: 0, width: 64, height: 64, type: 'static', hidden: true, chapter: 4 }
+            { id: 'door', x: 800, y: 0, width: 96, height: 160, type: 'interactable', action: 'door', chapter: 0, doorState: 'closed', doorAnimTimer: 0, doorAnimDuration: 600 },
+            { id: 'window', x: 1500, y: 0, width: 120, height: 140, type: 'interactable', action: 'window', chapter: 2, open: false },
+            { id: 'fireplace', x: 2500, y: 0, width: 180, height: 160, state: 'on', type: 'interactable', action: 'fireplace', chapter: 0 },
+            { id: 'lenorePortrait', x: 3500, y: 20, width: 100, height: 140, type: 'interactable', action: 'lenore', chapter: 0 },
+            { id: 'bookshelf', x: 4500, y: 0, width: 240, height: 220, type: 'interactable', action: 'books', chapter: 0 },
+            { id: 'pallasBust', x: 6000, y: 0, width: 140, height: 180, type: 'interactable', action: 'pallasBust', chapter: 4 },
+            { id: 'clock', x: 7000, y: 20, width: 100, height: 120, type: 'interactable', action: 'clock', chapter: 0 },
+            { id: 'finalPallas', x: 7500, y: 0, width: 160, height: 220, type: 'static', hidden: true, chapter: 4 }
         ];
 
+        // Corvo com comportamento de voo e rasante
         const raven = {
-            x: 0, y: 0, width: 32, height: 32,
-            state: 'hidden',
-            targetX: 0,
-            targetY: 0,
-            speed: 3
+            worldX: -300,        // começa fora à esquerda
+            worldY: 380,         // começar no céu (maior valor = mais alto)
+            width: 72,
+            height: 48,
+            state: 'hidden',     // 'hidden', 'flying', 'diving', 'flyingToBust', 'perched'
+            targetX: null,
+            targetY: null,
+            speed: 180,          // px/s (usamos deltaTime)
+            diveSpeed: 420,
+            entered: false,
+            blinkTimer: 0,
+            blinkDuration: 300
         };
 
+        // Inventário
         const inventory = [
-            { id: 'book', name: 'Livro', active: false, hasItem: false, usage: 'read' },
-            { id: 'portrait', name: 'Retrato', active: false, hasItem: false, usage: 'look' },
-            { id: 'key', name: 'Chave', active: false, hasItem: false, usage: 'unlock' },
-            { id: 'candle', name: 'Vela', active: false, hasItem: false, usage: 'light' },
-            { id: 'feather', name: 'Pena', active: false, hasItem: false, usage: 'examine' }
+            { id: 'book', name: 'Livro', active: false, hasItem: false },
+            { id: 'portrait', name: 'Retrato', active: false, hasItem: false },
+            { id: 'key', name: 'Chave', active: false, hasItem: false },
+            { id: 'candle', name: 'Vela', active: false, hasItem: false },
+            { id: 'feather', name: 'Pena', active: false, hasItem: false }
         ];
 
-        // Sussurros (memórias/poemas) espalhados pelo ambiente
+        // Sussurros
         const whispers = [
             { x: 500, text: "'Ah, distintamente me lembro... era no gélido dezembro'", chapter: 0, shown: false },
             { x: 1200, text: "'E cada brasa separada projetava seu fantasma no chão'", chapter: 0, shown: false },
@@ -523,535 +400,627 @@
             { x: 6500, text: "'E o único palavra dita foi uma palavra sussurrada: Lenore?'", chapter: 4, shown: false },
             { x: 7200, text: "'E o corvo, nunca pousando, ainda está sentado, ainda está sentado'", chapter: 4, shown: false }
         ];
+        
+        const player = {
+            worldX: 400,
+            worldY: -40,   // <<< empurra o personagem para baixo (antes 0)
+            width: 150,
+            height: 240,
+            vx: 0,
+            maxSpeed: 220,
+            accel: 1600,
+            friction: 0.92,
+            direction: 'right',
+            isMoving: false,
+            animationFrame: 0,
+            lastAnimTime: 0,
+            animInterval: 180
+        };
 
+
+        // Estado do jogo
+        let cameraX = 0;
         let isPlaying = false;
-        let isRavenBlinking = false;
-        let ravenBlinkTimeout;
-        let gameEnded = false;
         let currentChapter = 0;
         let hasInteractedWithDoor = false;
         let hasInteractedWithWindow = false;
-        let ravenEntered = false;
-        let lastTime = 0;
-        let nearObject = null;
         let lastRavenAppearance = 0;
-
+        let nearObject = null;
+        let gameEnded = false;
+        let lastTimestamp = 0;
         const keys = {};
+
+        // Eventos teclado
         document.addEventListener('keydown', (e) => {
-            if (isPlaying) {
-                keys[e.key] = true;
-                
-                // Teclas de inventário (1-5)
-                if (e.key >= '1' && e.key <= '5') {
-                    const index = parseInt(e.key) - 1;
-                    if (index < inventory.length) {
-                        selectInventoryItem(index);
-                    }
-                }
-                
-                // Usar item ativo
-                if ((e.key === 'u' || e.key === 'U') && nearObject) {
-                    useActiveItem(nearObject);
-                }
+            keys[e.key] = true;
+            // inventário 1-5
+            if (isPlaying && e.key >= '1' && e.key <= '5') {
+                const idx = parseInt(e.key) - 1;
+                if (idx < inventory.length) selectInventoryItem(idx);
+            }
+            // usar item com U
+            if (isPlaying && (e.key === 'u' || e.key === 'U') && nearObject) {
+                useActiveItem(nearObject);
             }
         });
-
         document.addEventListener('keyup', (e) => {
-            if (isPlaying) {
-                keys[e.key] = false;
+            keys[e.key] = false;
+            if (isPlaying && (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'ArrowRight' || e.key === 'd')) {
+                // parar passos
+                sounds.footsteps.pause();
+                sounds.footsteps.currentTime = 0;
             }
         });
 
-        function showChapter(chapterIndex) {
-            if (chapterIndex >= chapters.length) {
+        // UI funções
+        function showChapter(index) {
+            if (index >= chapters.length) {
                 isPlaying = true;
                 initGame();
                 return;
             }
-            
-            currentChapter = chapterIndex;
-            chapterTitle.textContent = chapters[chapterIndex].title;
-            chapterText.textContent = chapters[chapterIndex].text;
+            currentChapter = index;
+            chapterTitle.textContent = chapters[index].title;
+            chapterText.textContent = chapters[index].text;
             chapterOverlay.style.display = 'flex';
-            
             chapterOverlay.onclick = () => {
                 chapterOverlay.style.display = 'none';
-                if (chapterIndex === chapters.length - 1) {
-                    isPlaying = true;
-                    initGame();
-                } else {
-                    showChapter(chapterIndex + 1);
-                }
+                showChapter(index + 1);
             };
         }
 
-        function showDialog(text, duration = 4000) {
+        function showDialog(text, duration = 4200) {
             dialogBox.textContent = text;
             dialogBox.style.display = 'block';
             dialogBox.style.opacity = 1;
-            setTimeout(() => {
-                dialogBox.style.opacity = 0;
-                setTimeout(() => {
-                    dialogBox.style.display = 'none';
-                }, 300);
-            }, duration);
+            setTimeout(() => { dialogBox.style.opacity = 0; setTimeout(() => dialogBox.style.display = 'none', 300); }, duration);
         }
 
-        function showWhisper(text, duration = 4000) {
+        function showWhisper(text, duration = 3800) {
             whisperBox.textContent = text;
             whisperBox.style.display = 'block';
             whisperBox.style.opacity = 1;
-            setTimeout(() => {
-                whisperBox.style.opacity = 0;
-                setTimeout(() => {
-                    whisperBox.style.display = 'none';
-                }, 300);
-            }, duration);
+            setTimeout(() => { whisperBox.style.opacity = 0; setTimeout(() => whisperBox.style.display = 'none', 300); }, duration);
         }
 
-        function showNotification(text, duration = 2000) {
+        function showNotification(text, duration = 2200) {
             interactionNotification.textContent = text;
             interactionNotification.style.display = 'block';
-            setTimeout(() => {
-                interactionNotification.style.display = 'none';
-            }, duration);
+            setTimeout(() => interactionNotification.style.display = 'none', duration);
         }
 
+        // Inventário UI
         function updateInventory() {
             inventoryElement.innerHTML = '';
-            inventory.forEach((item, index) => {
-                const itemElement = document.createElement('div');
-                itemElement.className = `inventory-item ${item.active ? 'active' : ''} ${item.hasItem ? 'has-item' : ''}`;
-                itemElement.textContent = item.name[0];
-                itemElement.title = `${item.name}${item.hasItem ? '' : ' (não obtido)'}`;
-                itemElement.onclick = () => selectInventoryItem(index);
-                inventoryElement.appendChild(itemElement);
+            inventory.forEach((it, i) => {
+                const div = document.createElement('div');
+                div.className = 'inventory-item' + (it.active ? ' active' : '') + (it.hasItem ? ' has-item' : '');
+                div.textContent = it.name[0];
+                div.title = it.name + (it.hasItem ? '' : ' (não obtido)');
+                div.onclick = () => selectInventoryItem(i);
+                inventoryElement.appendChild(div);
             });
         }
-
         function selectInventoryItem(index) {
-            inventory.forEach((item, i) => {
-                item.active = i === index;
-            });
+            inventory.forEach((it, i) => it.active = (i === index));
             updateInventory();
-            
-            const activeItem = inventory.find(item => item.active);
-            if (activeItem && activeItem.hasItem) {
-                showNotification(`Item selecionado: ${activeItem.name}. Pressione U para usar.`, 2000);
-            }
+            const active = inventory[index];
+            if (active && active.hasItem) showNotification(`Item selecionado: ${active.name}. Pressione U para usar.`, 1600);
         }
-
-        function addToInventory(itemId) {
-            const item = inventory.find(i => i.id === itemId);
-            if (item && !item.hasItem) {
-                item.hasItem = true;
-                item.active = true;
-                updateInventory();
-                showDialog(`Você adquiriu: ${item.name}`);
-                sounds.itemPickup.play();
-                
-                // Seleciona automaticamente o novo item
-                selectInventoryItem(inventory.indexOf(item));
-            }
+        function addToInventory(id) {
+            const it = inventory.find(x => x.id === id);
+            if (it && !it.hasItem) { it.hasItem = true; it.active = true; updateInventory(); showDialog(`Você adquiriu: ${it.name}`); sounds.itemPickup.play(); }
         }
 
         function useActiveItem(object) {
-            const activeItem = inventory.find(item => item.active && item.hasItem);
-            if (!activeItem) return;
-            
-            switch (activeItem.id) {
+            const active = inventory.find(i => i.active && i.hasItem);
+            if (!active) return;
+            switch (active.id) {
                 case 'book':
-                    if (object.action === 'books') {
-                        showDialog('Você relembra os conhecimentos antigos... talvez haja uma maneira de comunicar-se com o além.');
-                    } else {
-                        showDialog('Não é o momento adequado para ler.');
-                    }
+                    if (object.action === 'books') showDialog('Você relembra os conhecimentos antigos...');
+                    else showDialog('Não é o momento adequado para ler.');
                     break;
                 case 'portrait':
-                    if (object.action === 'lenore') {
-                        showDialog('Lenore... seu sorriso ainda vive em minha memória. Por que você teve que partir?');
-                    } else {
-                        showDialog('Contemplar o retrato de Lenore aqui não trará conforto.');
-                    }
+                    if (object.action === 'lenore') showDialog('Lenore... seu retrato me traz tanto conforto quanto dor.'), addToInventory('portrait');
+                    else showDialog('Contemplar o retrato de Lenore aqui não trará conforto.');
                     break;
                 case 'candle':
                     if (object.action === 'fireplace') {
-                        const fireplace = objects.find(obj => obj.id === 'fireplace');
-                        if (fireplace.state === 'off') {
-                            fireplace.state = 'on';
-                            darknessOverlay.style.opacity = 0;
-                            sounds.fireplace.play();
-                            sounds.wind.pause();
-                            showDialog('Você acendeu a lareira com a vela. A sala se enche de calor e luz.');
-                        } else {
-                            showDialog('A lareira já está acesa.');
-                        }
-                    } else {
-                        showDialog('Não há como usar a vela aqui.');
-                    }
+                        const fp = objects.find(o => o.id === 'fireplace');
+                        if (fp.state === 'off') { fp.state = 'on'; darknessOverlay.style.opacity = 0; sounds.fireplace.play(); sounds.wind.pause(); showDialog('Você acendeu a lareira com a vela.'); }
+                        else showDialog('A lareira já está acesa.');
+                    } else showDialog('Não há como usar a vela aqui.');
                     break;
                 case 'feather':
-                    if (object.action === 'pallasBust' && raven.state === 'perched') {
-                        showDialog('A pena do corvo... talvez seja uma conexão com o mundo espiritual. O que ele realmente quer me dizer?');
-                    } else {
-                        showDialog('Esta pena negra como ébano brilha misteriosamente à luz tremula do fogo.');
-                    }
+                    if (object.action === 'pallasBust' && raven.state === 'perched') showDialog('A pena do corvo... talvez seja uma conexão...'), addToInventory('feather');
+                    else showDialog('Esta pena negra brilha misteriosamente.');
                     break;
                 default:
-                    showDialog(`Não há como usar ${activeItem.name} aqui.`);
+                    showDialog(`Não há como usar ${active.name} aqui.`);
             }
         }
 
-        function updateRaven() {
-            const now = Date.now();
-            
-            switch (raven.state) {
-                case 'hidden':
-                    if (currentChapter >= 3 && now - lastRavenAppearance > 15000 && !ravenEntered) {
-                        raven.state = 'flying';
-                        raven.x = -100;
-                        raven.y = -100;
-                        raven.targetX = objects.find(obj => obj.id === 'window').x - 50;
-                        raven.targetY = 100;
-                        lastRavenAppearance = now;
-                        sounds.raven.play();
-                    }
-                    break;
-                    
-                case 'flying':
-                    // Movimento em direção ao alvo
-                    const dx = raven.targetX - raven.x;
-                    const dy = raven.targetY - raven.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance > raven.speed) {
-                        raven.x += (dx / distance) * raven.speed;
-                        raven.y += (dy / distance) * raven.speed;
-                    } else {
-                        // Chegou à janela
-                        raven.x = raven.targetX;
-                        raven.y = raven.targetY;
-                        
-                        if (!hasInteractedWithWindow) {
-                            // Espera o jogador interagir com a janela
-                            showNotification("Há um corvo batendo na janela! Interaja com a janela.", 3000);
-                        } else {
-                            // Voa para o busto de Pallas
-                            const pallasBust = objects.find(obj => obj.id === 'pallasBust');
-                            raven.targetX = pallasBust.x;
-                            raven.targetY = pallasBust.y + 20;
-                            raven.state = 'flyingToBust';
-                        }
-                    }
-                    break;
-                    
-                case 'flyingToBust':
-                    const bust = objects.find(obj => obj.id === 'pallasBust');
-                    const dx2 = bust.x - raven.x;
-                    const dy2 = (bust.y + 20) - raven.y;
-                    const distance2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
-                    
-                    if (distance2 > raven.speed) {
-                        raven.x += (dx2 / distance2) * raven.speed;
-                        raven.y += (dy2 / distance2) * raven.speed;
-                    } else {
-                        // Chegou ao busto
-                        raven.x = bust.x;
-                        raven.y = bust.y + 20;
-                        raven.state = 'perched';
-                        ravenEntered = true;
-                        showDialog("O Corvo pousou no busto de Palas e não se move mais. Seus olhos parecem penetrar minha alma.");
-                    }
-                    break;
-                    
-                case 'perched':
-                    // O corvo está parado no busto, piscando ocasionalmente
-                    if (now - lastRavenAppearance > 8000 && !isRavenBlinking) {
-                        blinkRaven();
-                        lastRavenAppearance = now;
-                    }
-                    break;
+        // --- Raven logic (voo + rasante)
+        function trySpawnRaven(now) {
+            if (currentChapter >= 3 && (now - lastRavenAppearance) > 8000 && !raven.entered) {
+                raven.state = 'flying';
+                raven.worldX = -300;
+                raven.worldY = 340; // alto no céu
+                raven.targetX = objects.find(o => o.id === 'window').x - 80; // aproximar da janela
+                raven.targetY = objects.find(o => o.id === 'window').y + 20; // altura da janela (relativa ao chão)
+                lastRavenAppearance = now;
+                sounds.raven.play();
             }
         }
 
-        function blinkRaven() {
-            isRavenBlinking = true;
-            ravenBlinkTimeout = setTimeout(() => {
-                isRavenBlinking = false;
-            }, 500);
+        function updateRaven(dt) { // dt em segundos
+            const now = performance.now();
+            if (raven.state === 'hidden') {
+                trySpawnRaven(now);
+                return;
+            }
+
+            if (raven.state === 'flying') {
+                // mover suavemente em direção ao alvo
+                const tx = raven.targetX;
+                const ty = raven.targetY;
+                const dx = tx - raven.worldX;
+                const dy = ty - raven.worldY;
+                const dist = Math.hypot(dx, dy);
+                const step = raven.speed * dt;
+                if (dist > step) {
+                    raven.worldX += (dx / dist) * step;
+                    raven.worldY += (dy / dist) * step;
+                } else {
+                    // chegou próximo da janela -> iniciar rasante (diving)
+                    raven.state = 'diving';
+                    // destino do rasante: atravessar a janela para dentro do quarto (menor worldY -> mais próximo do chão)
+                    const wnd = objects.find(o => o.id === 'window');
+                    raven.targetX = wnd.x + (wnd.width / 2) + 80; // atravessa para dentro
+                    raven.targetY = wnd.y - 40; // passar por dentro, mais baixo que janela para efeito de rasante
+                }
+            } else if (raven.state === 'diving') {
+                const tx = raven.targetX, ty = raven.targetY;
+                const dx = tx - raven.worldX, dy = ty - raven.worldY;
+                const dist = Math.hypot(dx, dy);
+                const step = raven.diveSpeed * dt;
+                if (dist > step) {
+                    raven.worldX += (dx / dist) * step;
+                    raven.worldY += (dy / dist) * step;
+                } else {
+                    // atravessou a janela: agora voa para busto
+                    const pallasBust = objects.find(o => o.id === 'pallasBust');
+                    raven.state = 'flyingToBust';
+                    raven.targetX = pallasBust.x + (pallasBust.width / 2) - 20;
+                    raven.targetY = pallasBust.y + 20;
+                }
+            } else if (raven.state === 'flyingToBust') {
+                const tx = raven.targetX, ty = raven.targetY;
+                const dx = tx - raven.worldX, dy = ty - raven.worldY;
+                const dist = Math.hypot(dx, dy);
+                const step = raven.speed * dt;
+                if (dist > step) {
+                    raven.worldX += (dx / dist) * step;
+                    raven.worldY += (dy / dist) * step;
+                } else {
+                    raven.worldX = tx; raven.worldY = ty;
+                    raven.state = 'perched';
+                    raven.entered = true;
+                    showDialog("O Corvo pousou no busto de Palas e não se move mais. Seus olhos parecem penetrar minha alma.");
+                    addToInventory('feather');
+                }
+            } else if (raven.state === 'perched') {
+                // piscar ocasional
+                if (!raven.blinkUntil || performance.now() > raven.blinkUntil) {
+                    raven.blinkTimer = 0;
+                    if (Math.random() < 0.008) {
+                        raven.blinkTimer = raven.blinkDuration;
+                        raven.blinkUntil = performance.now() + 500 + Math.random() * 4000;
+                    }
+                }
+                if (raven.blinkTimer > 0) raven.blinkTimer -= dt * 1000;
+            }
         }
 
-        function updatePlayer() {
-            // Movimento mais suave com aceleração
-            if (keys['ArrowLeft'] || keys['a']) {
-                player.targetSpeed = -player.maxSpeed;
-            } else if (keys['ArrowRight'] || keys['d']) {
-                player.targetSpeed = player.maxSpeed;
+        // --- Jogador (movimento com deltaTime para suavidade)
+        function updatePlayer(dt) {
+            // leitura de input
+            const left = keys['ArrowLeft'] || keys['a'] || false;
+            const right = keys['ArrowRight'] || keys['d'] || false;
+
+            if (left) {
+                player.vx -= player.accel * dt;
+                player.direction = 'left';
+                player.isMoving = true;
+            } else if (right) {
+                player.vx += player.accel * dt;
+                player.direction = 'right';
+                player.isMoving = true;
             } else {
-                player.targetSpeed = 0;
+                player.vx *= Math.pow(player.friction, dt * 60 / 16);
+                player.isMoving = false;
+                if (Math.abs(player.vx) < 6) player.vx = 0;
             }
-            
-            // Aplicar aceleração
-            player.speedX += (player.targetSpeed - player.speedX) * player.acceleration;
-            
-            // Aplicar desaceleração quando não há entrada
-            if (player.targetSpeed === 0) {
-                player.speedX *= player.deceleration;
-                if (Math.abs(player.speedX) < 0.1) player.speedX = 0;
-            }
-            
-            player.x += player.speedX;
 
-            // Limita o movimento horizontal do jogador
-            if (player.x < 0) {
-                player.x = 0;
-                player.speedX = 0;
+            // clamp speed
+            if (player.vx > player.maxSpeed) player.vx = player.maxSpeed;
+            if (player.vx < -player.maxSpeed) player.vx = -player.maxSpeed;
+
+            // tentative new position
+            let nextX = player.worldX + player.vx * dt;
+
+            // impedir passar por porta se fechada
+            const door = objects.find(o => o.id === 'door');
+            if (door) {
+                const doorLeft = door.x;
+                const doorRight = door.x + door.width;
+                if (door.doorState !== 'open') {
+                    // se jogador tenta atravessar área da porta, bloqueia
+                    const buffer = 6;
+                    if (player.worldX + player.width / 2 < doorRight + buffer && nextX + player.width / 2 > doorLeft - buffer && door.x > player.worldX) {
+                        // bloqueia a passagem para a direita
+                        nextX = Math.min(nextX, doorLeft - (player.width / 2) - buffer);
+                        player.vx = 0;
+                    }
+                    if (player.worldX + player.width / 2 > doorLeft - buffer && nextX + player.width / 2 < doorRight + buffer && door.x < player.worldX) {
+                        // se tentando ir para esquerda através da porta fechada
+                        nextX = Math.max(nextX, doorRight + (player.width / 2) + buffer);
+                        player.vx = 0;
+                    }
+                }
             }
-            if (player.x > 8000) {
-                player.x = 8000;
-                player.speedX = 0;
+
+            // limites do mundo
+            if (nextX < 0) nextX = 0;
+            if (nextX > WORLD_WIDTH - player.width) nextX = WORLD_WIDTH - player.width;
+
+            player.worldX = nextX;
+
+            // atualizar câmera suavemente (centrar no jogador)
+            const targetCamX = player.worldX - CANVAS_W / 2 + player.width / 2;
+            cameraX += (targetCamX - cameraX) * Math.min(1, 8 * dt);
+            if (cameraX < 0) cameraX = 0;
+            if (cameraX > WORLD_WIDTH - CANVAS_W) cameraX = WORLD_WIDTH - CANVAS_W;
+
+            // animação de passos (simples)
+            if (player.isMoving) {
+                if (performance.now() - player.lastAnimTime > player.animInterval) {
+                    player.animationFrame = (player.animationFrame + 1) % 2;
+                    player.lastAnimTime = performance.now();
+                }
+                // tocar som de passos se disponível
+                if (sounds.footsteps.paused) {
+                    try { sounds.footsteps.play(); } catch (e) { }
+                }
+            } else {
+                // pausa passos se parado
+                if (!sounds.footsteps.paused) { sounds.footsteps.pause(); sounds.footsteps.currentTime = 0; }
             }
         }
 
-        function updateCamera() {
-            // Movimento da Câmera
-            const playerScreenX = player.x - cameraX;
-            const screenCenter = canvas.width / 2;
-            cameraX = player.x - screenCenter;
-        }
-
-        function updateInteractions() {
-            // Verifica interações com objetos
+        // --- Checar interações com objetos e sussurros
+        function checkInteractions() {
             nearObject = null;
-            objects.forEach(obj => {
-                if (obj.chapter > currentChapter) return;
-                
-                const distanceToObject = Math.abs(player.x - obj.x);
-                if (distanceToObject < 70) {
+            for (const obj of objects) {
+                if (obj.chapter > currentChapter) continue;
+                const objCenter = obj.x + obj.width / 2;
+                const playerCenter = player.worldX + player.width / 2;
+                const dist = Math.abs(objCenter - playerCenter);
+                if (dist < 140) {
                     nearObject = obj;
-                    
-                    let bubble = document.getElementById('interactBubble');
-                    if (!bubble) {
-                        bubble = document.createElement('div');
-                        bubble.id = 'interactBubble';
-                        bubble.classList.add('speech-bubble');
-                        document.body.appendChild(bubble);
-                    }
-                    
-                    bubble.textContent = 'Pressione E para interagir';
-                    bubble.style.display = 'flex';
-                    bubble.style.opacity = '1';
-                    const canvasRect = canvas.getBoundingClientRect();
-                    bubble.style.left = `${canvasRect.left + (obj.x - cameraX) + obj.width / 2 - bubble.offsetWidth / 2}px`;
-                    bubble.style.top = `${canvasRect.top + player.y - 60}px`;
-
+                    interactionNotification.textContent = `Pressione E para interagir com ${obj.id}`;
+                    interactionNotification.style.display = 'block';
+                    // tecla E
                     if (keys['e'] || keys['E']) {
-                        handleObjectInteraction(obj);
-                        keys['e'] = false;
-                        keys['E'] = false;
+                        handleInteraction(obj);
+                        keys['e'] = false; keys['E'] = false;
                     }
-                    
-                    // Mostra notificação se tiver um item ativo
-                    const activeItem = inventory.find(item => item.active && item.hasItem);
-                    if (activeItem) {
-                        showNotification(`Pressione U para usar ${activeItem.name}`, 100);
-                    }
+                    break;
                 }
-            });
-            
-            // Esconde o balão se não estiver perto de nada
-            const bubble = document.getElementById('interactBubble');
-            if (bubble && !nearObject) {
-                bubble.style.opacity = '0';
-                setTimeout(() => {
-                    if (bubble.style.opacity === '0') {
-                        bubble.style.display = 'none';
-                    }
-                }, 300);
             }
+            if (!nearObject) interactionNotification.style.display = 'none';
 
-            // Verifica lembranças
-            for (const whisper of whispers) {
-                if (whisper.chapter <= currentChapter && Math.abs(player.x - whisper.x) < 70 && !whisper.shown) {
-                    showWhisper(whisper.text);
-                    whisper.shown = true;
-                    sounds.whisper.play();
+            // sussurros
+            for (const s of whispers) {
+                if (s.chapter <= currentChapter && !s.shown) {
+                    const dist = Math.abs(s.x - player.worldX);
+                    if (dist < 140) { showWhisper(s.text); s.shown = true; break; }
                 }
             }
         }
 
-        function handleObjectInteraction(obj) {
+        // --- Interações (porta/ janela / lareira / busto / etc)
+        function handleInteraction(obj) {
             switch (obj.action) {
+                case 'door':
+                    // iniciar animação abrir/fechar
+                    if (obj.doorState === 'closed' || obj.doorState === 'closing') {
+                        // abrir
+                        obj.doorState = 'opening';
+                        obj.doorAnimTimer = 0;
+                        showDialog("Alguém bateu à porta. Você a abre cuidadosamente.");
+                        hasInteractedWithDoor = true;
+                        // quando aberto, corvo pode aparecer depois de um tempo
+                        setTimeout(() => showDialog("Nada fora do comum além do silêncio..."), 2500);
+                    } else if (obj.doorState === 'open' || obj.doorState === 'opening') {
+                        // iniciar fechamento
+                        obj.doorState = 'closing';
+                        obj.doorAnimTimer = 0;
+                        showDialog("Você fecha a porta, retornando à solidão da sala.");
+                    }
+                    break;
+                case 'window':
+                    if (!obj.open) {
+                        obj.open = true;
+                        showDialog("Você abre a janela. O vento da noite entra no aposento.");
+                        sounds.wind.play();
+                        hasInteractedWithWindow = true;
+                    } else {
+                        obj.open = false;
+                        showDialog("Você fecha a janela. O frio fica do lado de fora.");
+                        sounds.wind.pause();
+                    }
+                    // se corvo estiver voando para janela e o jogador abrir, corvo fará rasante (controlado pelo updateRaven)
+                    break;
                 case 'fireplace':
                     if (obj.state === 'on') {
                         obj.state = 'off';
                         darknessOverlay.style.opacity = 0.7;
                         sounds.fireplace.pause();
                         sounds.wind.play();
-                        showDialog('Você apagou o fogo da lareira. A escuridão e o frio se instalam.');
+                        showDialog("Você apagou a lareira. A sala fica fria e escura.");
                     } else {
-                        obj.state = 'on';
-                        darknessOverlay.style.opacity = 0;
-                        sounds.fireplace.play();
-                        sounds.wind.pause();
-                        showDialog('Você acendeu o fogo da lareira. O calor reconfortante preenche a sala.');
+                        const candle = inventory.find(i => i.id === 'candle');
+                        if (candle && candle.hasItem) {
+                            obj.state = 'on';
+                            darknessOverlay.style.opacity = 0;
+                            sounds.fireplace.play();
+                            sounds.wind.pause();
+                            showDialog("Você acendeu a lareira. A sala se enche de calor e luz.");
+                        } else showDialog("Preciso de algo para acender a lareira.");
                     }
-                    break;
-                case 'clock':
-                    showDialog('São doze badaladas... A meia-noite chegou. O tempo da minha dor está quase no fim.');
-                    sounds.clock.play();
-                    setTimeout(() => {
-                        transitionToEnd();
-                    }, 4000);
                     break;
                 case 'lenore':
-                    showDialog('Ah, Lenore... Sua memória é um eco de dor e saudade...');
-                    if (!inventory.find(i => i.id === 'portrait').hasItem) {
-                        addToInventory('portrait');
-                    }
+                    showDialog("Ah, Lenore... minha amada perdida.");
+                    addToInventory('portrait');
                     break;
                 case 'books':
-                    showDialog('Perdido em volumes estranhos e esquecidos do saber antigo, busco alívio para a minha tristeza...');
-                    if (!inventory.find(i => i.id === 'book').hasItem) {
-                        addToInventory('book');
-                    }
+                    showDialog("Livros de sabedoria esquecida...");
+                    addToInventory('book');
                     break;
                 case 'pallasBust':
                     if (raven.state === 'perched') {
-                        showDialog('O Corvo, imóvel no busto de Palas, parece sussurrar "Nunca mais" em minha mente...');
+                        showDialog("'Profeta!' disse eu, 'coisa do mal! - ainda profeta, seja pássaro ou demônio!'");
+                        setTimeout(() => showDialog("'O Corvo responde: Nunca mais!'"), 4200);
                     } else {
-                        showDialog('O busto de Pallas, a deusa da sabedoria. Ela me observa, silenciosa, como se guardasse um segredo...');
+                        showDialog("Um busto para meditação.");
                     }
                     break;
-                case 'door':
-                    if (!hasInteractedWithDoor) {
-                        showDialog('Abro a porta, mas encontro apenas escuridão e silêncio...');
-                        hasInteractedWithDoor = true;
-                        sounds.knock.play();
-                        setTimeout(() => showChapter(2), 4000);
-                    } else {
-                        showDialog('A porta está fechada. Nada há além de escuridão do outro lado.');
-                    }
-                    break;
-                case 'window':
-                    if (!hasInteractedWithWindow) {
-                        showDialog('Uma janela gradeada... Há um corvo insistente do lado de fora!');
-                        hasInteractedWithWindow = true;
-                        
-                        // Faz o corvo voar para o busto após interação com a janela
-                        if (raven.state === 'flying') {
-                            const pallasBust = objects.find(obj => obj.id === 'pallasBust');
-                            raven.targetX = pallasBust.x;
-                            raven.targetY = pallasBust.y + 20;
-                            raven.state = 'flyingToBust';
-                        }
-                        
-                        setTimeout(() => showChapter(4), 4000);
-                    } else {
-                        showDialog('A janela está fechada. O vento uiva lá fora.');
-                    }
+                case 'clock':
+                    showDialog("O relógio marca a meia-noite. Cada batida ecoa como um lamento.");
+                    try { sounds.clock.play(); } catch (e) { }
                     break;
             }
         }
 
-        function update(timestamp) {
-            if (gameEnded) return;
-            
-            const deltaTime = timestamp - lastTime;
-            lastTime = timestamp;
-            
-            updatePlayer();
-            updateCamera();
-            updateRaven();
-            updateInteractions();
-        }
-
-        function transitionToEnd() {
-            gameEnded = true;
-            const startX = player.x;
-            const startY = player.y;
-            const pallas = objects.find(obj => obj.id === 'finalPallas');
-            pallas.hidden = false;
-
-            function animateTransition(timestamp) {
-                if (!animateTransition.start) animateTransition.start = timestamp;
-                const progress = timestamp - animateTransition.start;
-                const duration = 2000;
-
-                const ratio = Math.min(progress/duration, 1);
-
-                player.x = startX + (pallas.x - startX) * ratio;
-
-                // Mantenha o player no chão
-                const groundY = canvas.height - 64 - player.height;
-                player.y = groundY;
-
-                darknessOverlay.style.opacity = ratio;
-
-                if (ratio < 1) {
-                    requestAnimationFrame(animateTransition);
-                } else {
-                    gameEnded = true;
-                    endOverlay.style.display = 'flex';
-                    sounds.wind.play();
-                }
-            }
-            requestAnimationFrame(animateTransition);
-        }
-
+        // --- Desenhar cena
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // clear
+            ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-            // Desenha o céu com efeito de paralaxe
-            const skyParallaxOffset = cameraX * 0.2;
-            const skyWidth = images.sky.width;
-            for (let i = -1; i * skyWidth < canvas.width + skyParallaxOffset; i++) {
-                ctx.drawImage(images.sky, i * skyWidth - skyParallaxOffset, 0, skyWidth, canvas.height);
+            // desenhar céu (repetir)
+            try {
+                const skyPattern = ctx.createPattern(images.sky, 'repeat');
+                ctx.fillStyle = skyPattern;
+                ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+            } catch (e) {
+                ctx.fillStyle = '#0a0a23'; ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
             }
 
-            // Desenha a grama com efeito de paralaxe
-            const grassParallaxOffset = cameraX;
-            const grassHeight = 64;
-            const yOffset = canvas.height - grassHeight;
-            const grassWidth = images.grass.width;
-            for (let i = -1; i * grassWidth < canvas.width + grassParallaxOffset; i++) {
-                ctx.drawImage(images.grass, i * grassWidth - grassParallaxOffset, yOffset, grassWidth, grassHeight);
+            // desenhar chão (faixa)
+            try {
+                const grassPattern = ctx.createPattern(images.grass, 'repeat');
+                ctx.fillStyle = grassPattern;
+                ctx.fillRect(0, CANVAS_H - GROUND_HEIGHT, CANVAS_W, GROUND_HEIGHT);
+            } catch (e) {
+                ctx.fillStyle = '#163a1f';
+                ctx.fillRect(0, CANVAS_H - GROUND_HEIGHT, CANVAS_W, GROUND_HEIGHT);
             }
-            player.y = yOffset - player.height;
 
-            // Desenha os objetos
-            objects.forEach(obj => {
-                if (obj.hidden || obj.chapter > currentChapter) return;
-                let imageToDraw = images[obj.id];
-                if (obj.action === 'fireplace') {
-                    imageToDraw = obj.state === 'on' ? images.fireplaceOn : images.fireplaceOff;
+            // desenhar objetos (usar obj.y para deslocamento acima do chão)
+            for (const obj of objects) {
+                if (obj.chapter > currentChapter) continue;
+                const screenX = Math.round(obj.x - cameraX);
+                const screenY = Math.round(CANVAS_H - GROUND_HEIGHT - obj.height - (obj.y || 0));
+                if (screenX + obj.width < 0 || screenX > CANVAS_W) continue;
+
+                // desenhar portas com animação de abrir/fechar (simples: deslizar para a direita quando abre)
+                if (obj.id === 'door') {
+                    let img = images.doorClosed;
+                    // animar
+                    if (obj.doorState === 'opening') {
+                        obj.doorAnimTimer += Math.min(50, 50); // handled no updateDoorAnimation; this is fallback
+                    }
+                    // escolher representação: se tiver doorOpen use-a, senão desenhar rotacionado/offset
+                    if (obj.doorState === 'open') {
+                        if (images.doorOpen) ctx.drawImage(images.doorOpen, screenX + 48, screenY, obj.width, obj.height);
+                        else ctx.drawImage(images.doorClosed, screenX + 48, screenY, obj.width, obj.height);
+                    } else {
+                        ctx.drawImage(images.doorClosed, screenX, screenY, obj.width, obj.height);
+                    }
+                    continue;
                 }
-                ctx.drawImage(imageToDraw, obj.x - cameraX, player.y + 16, obj.width, obj.height);
-            });
 
-            // Desenha o corvo
-            if (raven.state !== 'hidden' && !isRavenBlinking) {
-                ctx.drawImage(images.raven, raven.x - cameraX, raven.y, raven.width, raven.height);
+                // janela: desenhar dependendo se aberta (faça leve translucidez)
+                if (obj.id === 'window') {
+                    if (images.window) {
+                        if (obj.open) {
+                            ctx.globalAlpha = 0.9;
+                            ctx.drawImage(images.window, screenX, screenY, obj.width, obj.height);
+                            // desenhar efeito de vento (linhas rápidas)
+                            ctx.globalAlpha = 0.15;
+                            ctx.fillRect(screenX, screenY, obj.width, obj.height / 6);
+                            ctx.globalAlpha = 1;
+                        } else {
+                            ctx.drawImage(images.window, screenX, screenY, obj.width, obj.height);
+                        }
+                    }
+                    continue;
+                }
+
+                // lareira
+                if (obj.id === 'fireplace') {
+                    const img = (obj.state === 'on') ? images.fireplaceOn : images.fireplaceOff;
+                    ctx.drawImage(img, screenX, screenY, obj.width, obj.height);
+                    continue;
+                }
+
+                // outros
+                let imgKey = {
+                    'lenorePortrait': 'lenorePortrait',
+                    'bookshelf': 'bookshelf',
+                    'pallasBust': 'pallasBust',
+                    'clock': 'clock',
+                    'finalPallas': 'pallas'
+                }[obj.id];
+                if (imgKey && images[imgKey]) {
+                    ctx.drawImage(images[imgKey], screenX, screenY, obj.width, obj.height);
+                } else {
+                    // fallback rectangle
+                    ctx.fillStyle = 'rgba(200,200,200,0.08)';
+                    ctx.fillRect(screenX, screenY, obj.width, obj.height);
+                }
             }
 
-            // Desenha o narrador (personagem)
-            ctx.drawImage(images.narrator, player.x - cameraX, player.y, player.width, player.height);
+            // desenhar corvo (usa worldY relativo ao topo do "espaço a partir do chão")
+            if (raven.state !== 'hidden') {
+                const rx = Math.round(raven.worldX - cameraX);
+                // converter worldY (quanto mais alto maior o valor) para screenY: ground - height - (worldY)
+                const ry = Math.round(CANVAS_H - GROUND_HEIGHT - raven.height - raven.worldY);
+                // efeitos de rotação dependendo do estado
+                ctx.save();
+                if (raven.state === 'diving') {
+                    // inclinar imagem para baixo
+                    ctx.translate(rx + raven.width / 2, ry + raven.height / 2);
+                    ctx.rotate(Math.PI * 0.12); // ligeiro ângulo
+                    ctx.drawImage(images.raven, -raven.width / 2, -raven.height / 2, raven.width, raven.height);
+                } else {
+                    ctx.drawImage(images.raven, rx, ry, raven.width, raven.height);
+                }
+                // piscar (simular com retângulo simples)
+                if (raven.blinkTimer > 0) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    ctx.fillRect(rx + raven.width * 0.18, ry + raven.height * 0.18, raven.width * 0.18, raven.height * 0.14);
+                    ctx.fillRect(rx + raven.width * 0.57, ry + raven.height * 0.18, raven.width * 0.18, raven.height * 0.14);
+                }
+                ctx.restore();
+            }
+
+            // desenhar jogador (narrador) — imagens agora desenhadas maiores
+            const playerScreenX = Math.round(player.worldX - cameraX);
+            const playerScreenY = Math.round(CANVAS_H - GROUND_HEIGHT - player.height - player.worldY);
+            let frameImg = images.narratorIdleRight;
+            if (player.isMoving) {
+                if (player.direction === 'right') frameImg = (player.animationFrame === 0 ? images.narratorRight1 : images.narratorRight2);
+                else frameImg = (player.animationFrame === 0 ? images.narratorLeft1 : images.narratorLeft2);
+            } else {
+                frameImg = (player.direction === 'right' ? images.narratorIdleRight : images.narratorIdleLeft);
+            }
+            if (frameImg) {
+                ctx.drawImage(frameImg, playerScreenX, playerScreenY, player.width, player.height);
+            } else {
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(playerScreenX, playerScreenY, player.width, player.height);
+            }
         }
 
-        function gameLoop(timestamp) {
-            if (gameEnded) return;
-            update(timestamp);
-            draw();
+        // --- Atualizar animação da porta
+        function updateDoorAnimation(dt) {
+            const door = objects.find(o => o.id === 'door');
+            if (!door) return;
+            // avançar temporizador e mudar estado quando terminar
+            if (door.doorState === 'opening') {
+                door.doorAnimTimer += dt * 1000;
+                if (door.doorAnimTimer >= door.doorAnimDuration) {
+                    door.doorAnimTimer = door.doorAnimDuration;
+                    door.doorState = 'open';
+                    // quando estiver aberta, permitir passagem
+                }
+            } else if (door.doorState === 'closing') {
+                door.doorAnimTimer += dt * 1000;
+                if (door.doorAnimTimer >= door.doorAnimDuration) {
+                    door.doorAnimTimer = door.doorAnimDuration;
+                    door.doorState = 'closed';
+                }
+            }
+            // (A representação visual já é simples: se open => desenha porta deslocada; se closed => posição normal)
+        }
+
+        // --- Loop principal
+        function gameLoop(ts) {
+            if (!lastTimestamp) lastTimestamp = ts;
+            const dt = Math.min(0.05, (ts - lastTimestamp) / 1000); // limite dt para evitar saltos grandes
+            lastTimestamp = ts;
+
+            if (isPlaying) {
+                // atualizações
+                updatePlayer(dt);
+                updateDoorAnimation(dt);
+                updateRaven(dt);
+                checkInteractions();
+
+                // limpar e desenhar
+                draw();
+
+                // checar condição de fim (exemplo: corvo pousado e jogador próximo do final)
+                if (raven.entered && player.worldX > 7400 && !gameEnded) {
+                    isPlaying = false;
+                    setTimeout(() => { endOverlay.style.display = 'flex'; gameEnded = true; }, 1200);
+                }
+            }
+
+            if (!gameEnded) requestAnimationFrame(gameLoop);
+        }
+
+        // iniciar jogo
+        function initGame() {
+            isPlaying = true;
+            // tocar sons ambiente
+            try { sounds.wind.play(); sounds.fireplace.play(); } catch (e) { }
+            updateInventory();
             requestAnimationFrame(gameLoop);
         }
 
-        function initGame() {
+        // iniciar quando clicado na intro (configurado no carregamento de imagens)
+        introOverlay.addEventListener('click', () => { introOverlay.style.display = 'none'; showChapter(0); });
+
+        // reiniciar quando clicar no final
+        endOverlay.addEventListener('click', () => {
+            endOverlay.style.display = 'none';
+            // reset
+            cameraX = 0;
+            player.worldX = 400; player.vx = 0; player.direction = 'right'; player.isMoving = false;
+            raven.worldX = -300; raven.worldY = 380; raven.state = 'hidden'; raven.entered = false;
+            currentChapter = 0; hasInteractedWithDoor = false; hasInteractedWithWindow = false; gameEnded = false;
+            lastRavenAppearance = 0; lastTimestamp = 0;
+            // reset inventory and whispers and objects
+            inventory.forEach(i => { i.active = false; i.hasItem = false; });
+            whispers.forEach(s => s.shown = false);
+            objects.forEach(o => {
+                if (o.id === 'fireplace') o.state = 'on';
+                if (o.id === 'door') { o.doorState = 'closed'; o.doorAnimTimer = 0; }
+                if (o.id === 'window') o.open = false;
+            });
+            darknessOverlay.style.opacity = 0;
             updateInventory();
-            sounds.fireplace.play();
-            lastTime = performance.now();
-            lastRavenAppearance = lastTime;
-            gameLoop(lastTime);
-        }
+            showChapter(0);
+        });
+
+        // Função de inicialização final (garante que user possa clicar no intro após imagens carregarem)
+        // Se imagens já carregadas, ligar clique (fallback)
+        introOverlay.onclick = (() => { introOverlay.style.display = 'none'; showChapter(0); });
+
     </script>
 </body>
+
 </html>
